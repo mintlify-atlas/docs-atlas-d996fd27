@@ -1,0 +1,82 @@
+{
+  "projectType": "general",
+  "projectName": "Programming 2 Exercises",
+  "projectDescription": "A comprehensive collection of PHP programming exercises covering fundamentals, functions, OOP, and CRUD operations",
+  "theme": "almond",
+  "primaryColor": "#3B82F6",
+  "lightColor": "#60A5FA",
+  "darkColor": "#2563EB",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "introduction",
+          "setup"
+        ]
+      },
+      {
+        "group": "Basic Exercises",
+        "pages": [
+          "exercises/basic/overview",
+          "exercises/basic/conditionals",
+          "exercises/basic/loops",
+          "exercises/basic/arrays"
+        ]
+      },
+      {
+        "group": "Functions",
+        "pages": [
+          "exercises/functions/overview",
+          "exercises/functions/prime-numbers",
+          "exercises/functions/arrays-manipulation",
+          "exercises/functions/string-operations"
+        ]
+      },
+      {
+        "group": "Object-Oriented Programming",
+        "pages": [
+          "exercises/oop/overview",
+          "exercises/oop/classes-basics",
+          "exercises/oop/banking-system",
+          "exercises/oop/inheritance"
+        ]
+      },
+      {
+        "group": "CRUD & Database",
+        "pages": [
+          "exercises/crud/overview",
+          "exercises/crud/database-setup",
+          "exercises/crud/orm-pattern",
+          "exercises/crud/operations"
+        ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "reference/exercise-index",
+          "reference/code-examples"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "35 basic programming exercises covering core PHP concepts",
+    "Function-based programming exercises with practical examples",
+    "Object-Oriented Programming with a complete banking system simulation",
+    "Full CRUD implementation with custom ORM pattern",
+    "Database operations with PDO and MySQL",
+    "MVC architecture demonstration"
+  ],
+  "publicApiSurface": [
+    "ORM::save() - Create database records",
+    "ORM::getAll() - Retrieve all records",
+    "ORM::getById() - Retrieve record by ID",
+    "ORM::updateById() - Update existing records",
+    "ORM::deleteById() - Delete records",
+    "CuentaBanco::depositar() - Deposit money",
+    "CuentaBanco::retirar() - Withdraw money",
+    "CuentaBanco::transferencia() - Transfer between accounts",
+    "CuentaBanco::RegistrarTransaccion() - Log transactions"
+  ]
+}
