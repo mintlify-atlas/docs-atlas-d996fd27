@@ -1,0 +1,220 @@
+---
+title: 'Exercise Index'
+description: 'Complete index of all 65+ PHP programming exercises organized by category'
+icon: 'list'
+---
+
+# Exercise Index
+
+This comprehensive index contains all PHP exercises available in the collection, organized by category and difficulty level.
+
+<AccordionGroup>
+  <Accordion title="Basic Exercises (35 exercises)" icon="code" defaultOpen>
+    The foundational exercises covering PHP basics, conditionals, loops, and string manipulation.
+
+    ### Control Flow & Conditionals
+    - **ejercicio-01-08.php** - Verify if a number is positive, negative, or zero
+    - **ejercicio-02.php** - Basic conditional statements
+    - **ejercicio-03.php** - Multiple condition checks
+    - **ejercicio-04.php** - Nested conditionals
+    - **ejercicio-05.php** - Switch case examples
+    - **ejercicio-06.php** - Comparison operators
+    - **ejercicio-07.php** - Logical operators
+
+    ### Loops & Iterations
+    - **ejercicio-09.php** - Basic while loop
+    - **ejercicio-10.php** - Determine if a number is a multiple of another
+    - **ejercicio-11.php** - For loop patterns
+    - **ejercicio-12.php** - Nested loops
+    - **ejercicio-13.php** - Do-while loops
+    - **ejercicio-14.php** - Loop control statements
+    - **ejercicio-15.php** - Generate asterisk patterns (triangles)
+    - **ejercicio-16.php** - Number patterns
+    - **ejercicio-17.php** - Advanced loop techniques
+
+    ### String Operations
+    - **ejercicio-18.php** - String length and manipulation
+    - **ejercicio-19.php** - String functions
+    - **ejercicio-20.php** - Concatenate two strings
+    - **ejercicio-21.php** - String replacement
+    - **ejercicio-22.php** - Case conversion
+    - **ejercicio-23.php** - Determine if a year is even or odd
+
+    ### Arrays & Data Structures
+    - **ejercicio-24.php** - Array basics
+    - **ejercicio-25.php** - Array functions
+    - **ejercicio-26.php** - Multidimensional arrays
+    - **ejercicio-27.php** - Array sorting
+    - **ejercicio-28.php** - Array filtering
+    - **ejercicio-29.php** - Array mapping
+    - **ejercicio-30.php** - Array reduction
+
+    ### Mathematical Operations
+    - **ejercicio-31.php** - Basic arithmetic
+    - **ejercicio-32.php** - Mathematical functions
+    - **ejercicio-33.php** - Number validation
+    - **ejercicio-34.php** - Advanced calculations
+    - **ejercicio-35.php** - Statistical operations
+
+    ### Additional Resources
+    - **basicCommands.php** - Basic PHP syntax, variables, data types, operators
+    - **buclesBasicos.php** - Fundamental loop examples with conditionals
+  </Accordion>
+
+  <Accordion title="Function Exercises (10 exercises)" icon="function">
+    Advanced exercises focusing on function creation, parameters, return values, and algorithms.
+
+    ### Prime Numbers & Statistics
+    - **funcion-01.php** - Count prime numbers, non-primes, even and odd numbers in first 100 natural numbers
+      - Returns associative array with counts
+      - Implements prime number algorithm
+      - Demonstrates loop optimization
+
+    ### Mathematical Functions
+    - **funcion-02.php** - Custom mathematical operations
+    - **funcion-03.php** - Function parameters and return values
+    - **funcion-04.php** - Recursive functions
+    - **funcion-05.php** - Generate first 150 Fibonacci numbers
+      - Implements iterative Fibonacci algorithm
+      - Array manipulation techniques
+      - Efficient number generation
+
+    ### String Functions
+    - **funcion-06.php** - String manipulation functions
+    - **funcion-07.php** - Text processing
+    - **funcion-08.php** - Pattern matching
+
+    ### Array Functions
+    - **funcion-09.php** - Array operations
+    - **funcion-10.php** - Advanced array manipulation
+  </Accordion>
+
+  <Accordion title="Object-Oriented Programming (Banking System)" icon="building-columns">
+    Complete banking system implementation demonstrating OOP principles, inheritance, encapsulation, and relationships.
+
+    ### Core Classes
+    - **CuentaBanco.class.php** - Base bank account class
+      - Private properties: numeroCuenta, tipo, titular, saldo, claveCajero
+      - Transaction history tracking
+      - Methods: depositar(), retirar(), transferencia()
+      - Encapsulation with getters and setters
+
+    - **cliente.class.php** - Client/customer class
+      - Properties: nombre, apellido, cedula, cuentas
+      - Account management per customer
+      - Complete getter/setter implementation
+
+    - **Transaccion.class.php** - Transaction record class
+      - Tracks transaction type, amount, and timestamp
+      - Integration with account operations
+
+    ### Specialized Account Types
+    - **CuentaAhorro.class.php** - Savings account (extends CuentaBanco)
+      - Interest calculations
+      - Withdrawal limitations
+
+    - **CuentaCorriente.class.php** - Checking account (extends CuentaBanco)
+      - Overdraft features
+      - Check writing capabilities
+
+    ### Additional Components
+    - **Cajero.class.php** - ATM/Teller class
+      - Cash withdrawal operations
+      - PIN verification
+
+    - **BancoInstancias.php** - Bank instances and testing
+      - Object instantiation examples
+      - System integration testing
+
+    - **databaseTest.php** - Database integration testing
+      - Persistence layer testing
+      - Connection handling
+  </Accordion>
+
+  <Accordion title="CRUD Operations (User Management)" icon="database">
+    Complete CRUD implementation with MVC pattern, PDO, and ORM abstraction layer.
+
+    ### Database Layer
+    - **database.php** - Database connection class
+      - PDO configuration with error handling
+      - UTF-8 charset support
+      - Connection management methods
+
+    - **orm.class.php** - ORM base class (102 lines)
+      - **Create**: save() method with filtered data
+      - **Read**: getAll(), getById() methods
+      - **Update**: updateById() with dynamic SET clauses
+      - **Delete**: deleteById() method
+      - SQL injection protection
+      - Prepared statements throughout
+
+    ### Model
+    - **usuario.class.php** - User model extending ORM
+      - Inherits all CRUD operations
+      - Table: usuarios, Primary Key: id
+
+    ### Controllers (MVC Pattern)
+    - **registroUsuario.controller.php** - User registration
+      - POST data handling
+      - Password hashing (PASSWORD_BCRYPT)
+      - Redirect after save
+
+    - **listarUsuario.controller.php** - List all users
+      - Fetch all users from database
+      - Data preparation for view
+
+    - **modificarUsuario.controller.php** - Update user data
+      - Form data processing
+      - Update validation
+
+    - **borrarUsuario.controller.php** - Delete user
+      - Soft/hard delete implementation
+      - Confirmation handling
+
+    ### Views (Presentation Layer)
+    - **registroUsuario.view.php** - Registration form
+    - **listarUsuario.view.php** - User listing table
+    - **modificarUsuario.view.php** - Edit form
+    - **borrarUsuario.view.php** - Delete confirmation
+  </Accordion>
+
+  <Accordion title="Additional Scripts" icon="file-code">
+    Supplementary files and system entry points.
+
+    ### Main Files
+    - **index.php** - Main application entry point
+    - **index-old.php** - Legacy version
+    - **index-firstLevelOfCrud.php** - Initial CRUD implementation
+  </Accordion>
+</AccordionGroup>
+
+## Exercise Statistics
+
+<CardGroup cols={2}>
+  <Card title="Total Exercises" icon="hashtag">
+    65+ exercises across all categories
+  </Card>
+  <Card title="Categories" icon="layer-group">
+    5 major categories covering PHP fundamentals to advanced topics
+  </Card>
+  <Card title="Code Files" icon="file">
+    70+ PHP files including exercises, classes, and utilities
+  </Card>
+  <Card title="Topics Covered" icon="book">
+    Variables, Functions, OOP, CRUD, MVC, PDO, Security
+  </Card>
+</CardGroup>
+
+## Quick Navigation
+
+Use this guide to quickly find exercises by topic:
+
+- **Just starting?** Begin with Basic Exercises (ejercicio-01 through ejercicio-35)
+- **Learning functions?** Check the Function Exercises section
+- **Exploring OOP?** Study the Banking System implementation
+- **Need CRUD examples?** Review the User Management system
+- **Looking for patterns?** See the [Code Examples](/reference/code-examples) page
+
+<Tip>
+All exercises include inline comments explaining the concepts. Start with basicCommands.php and buclesBasicos.php for fundamental concepts.
+</Tip>

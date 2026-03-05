@@ -1,0 +1,449 @@
+---
+title: Setup Guide
+description: Complete guide to setting up your PHP development environment for running all exercises in this collection.
+---
+
+## Overview
+
+This guide will walk you through setting up a complete PHP development environment to run all exercises, from basic scripts to the full CRUD application with MySQL database.
+
+<Note>
+The exercises have been tested with PHP 8.2.12 and MariaDB 10.4.32, but should work with PHP 7.4+ and MySQL 5.7+.
+</Note>
+
+## Prerequisites
+
+Before starting, ensure you have:
+
+- A computer running Windows, macOS, or Linux
+- Administrator/root access for installation
+- At least 500MB of free disk space
+- Basic command line knowledge
+
+## PHP Installation
+
+<Steps>
+  <Step title="Choose Your Installation Method">
+    You have two main options for setting up PHP:
+    
+    **Option 1: XAMPP (Recommended for Beginners)**
+    - All-in-one package with Apache, MySQL, and PHP
+    - Easy graphical interface
+    - Works on Windows, macOS, and Linux
+    
+    **Option 2: Standalone PHP**
+    - More flexible and lightweight
+    - Better for advanced users
+    - Requires separate MySQL installation
+  </Step>
+
+  <Step title="Install XAMPP (Option 1)">
+    <Warning>
+    XAMPP includes Apache web server and MySQL/MariaDB, so you don't need to install them separately.
+    </Warning>
+
+    1. Download XAMPP from [https://www.apachefriends.org](https://www.apachefriends.org)
+    2. Run the installer and follow the installation wizard
+    3. Select at least these components:
+       - Apache
+       - MySQL
+       - PHP
+       - phpMyAdmin
+    4. Choose installation directory (default: `C:\xampp` on Windows)
+    5. Complete the installation
+
+    **Verify Installation:**
+    
+    <CodeGroup>
+    ```bash Windows
+    cd C:\xampp
+    php\php.exe -v
+    ```
+
+    ```bash macOS/Linux
+    /Applications/XAMPP/bin/php -v
+    ```
+    </CodeGroup>
+
+    You should see output similar to:
+    ```
+    PHP 8.2.12 (cli) (built: Oct 24 2023 21:15:15) (ZTS Visual C++ 2019 x64)
+    ```
+  </Step>
+
+  <Step title="Install Standalone PHP (Option 2)">
+    <CodeGroup>
+    ```bash Windows
+    # Download from https://windows.php.net/download/
+    # Extract to C:\php
+    # Add C:\php to your PATH environment variable
+    php -v
+    ```
+
+    ```bash macOS (using Homebrew)
+    brew install php@8.2
+    php -v
+    ```
+
+    ```bash Ubuntu/Debian
+    sudo apt update
+    sudo apt install php8.2 php8.2-cli php8.2-mysql php8.2-mbstring
+    php -v
+    ```
+
+    ```bash CentOS/RHEL
+    sudo dnf install php php-cli php-mysqlnd php-mbstring
+    php -v
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Configure PHP (Required for CRUD Exercises)">
+    Locate your `php.ini` file and enable the following extensions:
+
+    ```ini php.ini
+    extension=pdo_mysql
+    extension=mysqli
+    extension=mbstring
+    ```
+
+    **Find php.ini location:**
+    ```bash
+    php --ini
+    ```
+
+    <Note>
+    On XAMPP, the php.ini file is typically located at:
+    - Windows: `C:\xampp\php\php.ini`
+    - macOS: `/Applications/XAMPP/etc/php.ini`
+    - Linux: `/opt/lampp/etc/php.ini`
+    </Note>
+
+    After making changes, restart Apache (if using XAMPP) or your web server.
+  </Step>
+</Steps>
+
+## MySQL Database Setup
+
+<Steps>
+  <Step title="Start MySQL Server">
+    **If using XAMPP:**
+    
+    1. Open XAMPP Control Panel
+    2. Click "Start" next to Apache
+    3. Click "Start" next to MySQL
+    4. Wait for both services to show green status
+
+    **If using standalone MySQL:**
+    
+    <CodeGroup>
+    ```bash Windows
+    net start mysql
+    ```
+
+    ```bash macOS
+    brew services start mysql
+    ```
+
+    ```bash Linux
+    sudo systemctl start mysql
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Create Database for CRUD Exercises">
+    The CRUD exercises require a database named `yixondb` with a `usuarios` table.
+
+    **Option 1: Using phpMyAdmin (XAMPP users)**
+    
+    1. Open your browser and go to [http://localhost/phpmyadmin](http://localhost/phpmyadmin)
+    2. Click "New" in the left sidebar
+    3. Enter database name: `yixondb`
+    4. Choose collation: `utf8mb4_general_ci`
+    5. Click "Create"
+
+    **Option 2: Using Command Line**
+    
+    ```bash
+    mysql -u root -p
+    ```
+
+    Then in MySQL prompt:
+    ```sql
+    CREATE DATABASE yixondb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+    USE yixondb;
+    ```
+  </Step>
+
+  <Step title="Import Database Schema">
+    The project includes a SQL file to create the required table structure.
+
+    **Using phpMyAdmin:**
+    
+    1. Select `yixondb` database
+    2. Click "Import" tab
+    3. Choose file: `scripts/CRUD/yixondb.sql`
+    4. Click "Go"
+
+    **Using Command Line:**
+    
+    ```bash
+    mysql -u root -p yixondb < scripts/CRUD/yixondb.sql
+    ```
+
+    This creates the `usuarios` table with the following structure:
+
+    ```sql
+    CREATE TABLE `usuarios` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `cedula` varchar(8) NOT NULL,
+      `nombres` varchar(255) NOT NULL,
+      `apellidos` varchar(255) NOT NULL,
+      `email` varchar(255) NOT NULL,
+      `user_pass` varchar(18) NOT NULL,
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `cedula` (`cedula`),
+      UNIQUE KEY `email` (`email`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ```
+  </Step>
+
+  <Step title="Configure Database Connection">
+    Update the database connection details in `scripts/CRUD/database.php`:
+
+    ```php scripts/CRUD/database.php
+    class Database {
+        private $conexion;
+
+        public function __construct() {
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ];
+
+            // Update these values if your setup is different
+            $host = 'localhost';
+            $dbname = 'yixondb';
+            $username = 'root';
+            $password = ''; // Empty for XAMPP default
+
+            $this->conexion = new PDO(
+                "mysql:host=$host;dbname=$dbname;charset=utf8",
+                $username,
+                $password,
+                $options
+            );
+
+            $this->conexion->exec('SET CHARACTER SET UTF8');
+        }
+    }
+    ```
+
+    <Warning>
+    The default XAMPP MySQL root user has no password. In production environments, always use strong passwords!
+    </Warning>
+  </Step>
+</Steps>
+
+## Web Server Configuration
+
+You can run the exercises using either Apache (via XAMPP) or PHP's built-in development server.
+
+<Steps>
+  <Step title="Option 1: Using Apache (XAMPP)">
+    1. Copy the entire project to XAMPP's `htdocs` folder:
+       - Windows: `C:\xampp\htdocs\php-exercises`
+       - macOS: `/Applications/XAMPP/htdocs/php-exercises`
+       - Linux: `/opt/lampp/htdocs/php-exercises`
+
+    2. Make sure Apache is running (green in XAMPP Control Panel)
+
+    3. Open your browser and navigate to:
+       ```
+       http://localhost/php-exercises/
+       ```
+
+    <Note>
+    Apache automatically serves `index.php` as the default file, so you'll see the main exercise dashboard.
+    </Note>
+  </Step>
+
+  <Step title="Option 2: Using PHP Built-in Server">
+    Perfect for quick testing without Apache configuration.
+
+    1. Open terminal/command prompt
+    2. Navigate to the project directory
+    3. Start the PHP development server:
+
+    ```bash
+    cd /path/to/php-exercises
+    php -S localhost:8000
+    ```
+
+    4. Open your browser and navigate to:
+       ```
+       http://localhost:8000
+       ```
+
+    <Warning>
+    The PHP built-in server is for development only. Never use it in production environments.
+    </Warning>
+  </Step>
+
+  <Step title="Verify Setup">
+    Test that everything is working:
+
+    1. **Test Basic PHP:**
+       Navigate to `http://localhost:8000/scripts/basicCommands.php`
+       You should see PHP output without errors.
+
+    2. **Test Database Connection:**
+       Navigate to `http://localhost:8000/`
+       Scroll to the "CRUD básico con PHP" section.
+       You should see the user list without database connection errors.
+
+    3. **Test CRUD Operations:**
+       Try registering a new user in the registration form.
+       If successful, the user appears in the user list.
+  </Step>
+</Steps>
+
+## Running Individual Exercises
+
+### Basic Exercises
+
+Basic exercises can be run directly:
+
+<CodeGroup>
+```bash Using PHP CLI
+php scripts/35-ejercicios-basicos/ejercicio-01-08.php
+```
+
+```bash Using Browser
+http://localhost:8000/scripts/35-ejercicios-basicos/ejercicio-01-08.php
+```
+</CodeGroup>
+
+### Function Exercises
+
+Function exercises work the same way:
+
+<CodeGroup>
+```bash Using PHP CLI
+php scripts/ejercicios-funciones/funcion-01.php
+```
+
+```bash Using Browser
+http://localhost:8000/scripts/ejercicios-funciones/funcion-01.php
+```
+</CodeGroup>
+
+### OOP Banking System
+
+The banking system requires running the main file:
+
+<CodeGroup>
+```bash Using PHP CLI
+php scripts/POO/ejercicio-banco/BancoInstancias.php
+```
+
+```bash Using Browser
+http://localhost:8000/scripts/POO/ejercicio-banco/BancoInstancias.php
+```
+</CodeGroup>
+
+### CRUD Application
+
+The CRUD application must be run through a web server (not CLI) because it includes HTML forms:
+
+```bash
+http://localhost:8000/
+```
+
+Scroll down to the "CRUD básico con PHP" section to interact with:
+- User registration form
+- User list viewer
+- User update form
+- User deletion form
+
+## Common Issues & Solutions
+
+### PHP Not Found
+
+**Problem:** `php: command not found`
+
+**Solution:** Add PHP to your system PATH:
+
+<CodeGroup>
+```bash Windows
+setx PATH "%PATH%;C:\xampp\php"
+```
+
+```bash macOS/Linux
+echo 'export PATH="/Applications/XAMPP/bin:$PATH"' >> ~/.bash_profile
+source ~/.bash_profile
+```
+</CodeGroup>
+
+### MySQL Connection Failed
+
+**Problem:** `SQLSTATE[HY000] [2002] No such file or directory`
+
+**Solution:** Ensure MySQL is running and check connection settings in `scripts/CRUD/database.php`
+
+<CodeGroup>
+```bash Check MySQL Status (XAMPP)
+# Open XAMPP Control Panel
+# MySQL should show green "Running" status
+```
+
+```bash Check MySQL Status (Linux)
+sudo systemctl status mysql
+```
+</CodeGroup>
+
+### Port Already in Use
+
+**Problem:** `Address already in use` when starting PHP server
+
+**Solution:** Use a different port:
+
+```bash
+php -S localhost:8080
+```
+
+### Permission Denied
+
+**Problem:** Cannot access files or create database
+
+**Solution:**
+- **Windows:** Run XAMPP Control Panel as Administrator
+- **Linux/macOS:** Check file permissions
+  ```bash
+  sudo chmod -R 755 /path/to/php-exercises
+  sudo chown -R $USER:$USER /path/to/php-exercises
+  ```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Start with Basic Exercises" icon="play" href="/exercises/basic/overview">
+    Begin your PHP journey with 35 foundational exercises.
+  </Card>
+  
+  <Card title="Explore Functions" icon="code" href="/exercises/functions/overview">
+    Learn to write reusable code with function exercises.
+  </Card>
+  
+  <Card title="Master OOP Concepts" icon="cube" href="/exercises/oop/overview">
+    Build a banking system using object-oriented programming.
+  </Card>
+  
+  <Card title="Build CRUD Application" icon="database" href="/exercises/crud/overview">
+    Create a complete user management system with MySQL.
+  </Card>
+</CardGroup>
+
+<Note>
+Now that your environment is set up, you're ready to start coding! Head to the [Basic Exercises](/basic-exercises) section to begin.
+</Note>

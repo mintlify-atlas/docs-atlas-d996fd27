@@ -1,0 +1,83 @@
+---
+title: 'Object-Oriented Programming Overview'
+description: 'Learn PHP OOP concepts through a real-world banking system exercise'
+---
+
+## Introduction to OOP in PHP
+
+Object-Oriented Programming (OOP) is a programming paradigm that organizes code into reusable, modular components called **classes** and **objects**. This exercise collection demonstrates core OOP principles through a practical banking system implementation.
+
+<Note>
+  These exercises use real-world banking concepts to teach OOP fundamentals including classes, inheritance, encapsulation, and object relationships.
+</Note>
+
+## What You'll Learn
+
+This OOP module covers essential concepts:
+
+- **Classes and Objects**: Define blueprints and create instances
+- **Properties and Methods**: Store data and define behaviors
+- **Constructors**: Initialize objects with required data
+- **Encapsulation**: Use private properties with public getter/setter methods
+- **Inheritance**: Extend base classes to create specialized types
+- **Object Relationships**: Connect objects (Cliente has multiple CuentaBanco)
+
+## The Banking System Exercise
+
+The main exercise implements a complete banking system with the following components:
+
+<CardGroup cols={2}>
+  <Card title="Core Classes" icon="cube">
+    - **CuentaBanco**: Base bank account class
+    - **Cliente**: Customer with multiple accounts
+    - **Transaccion**: Transaction records
+    - **Cajero**: ATM for withdrawals and queries
+  </Card>
+  
+  <Card title="Specialized Accounts" icon="building-columns">
+    - **CuentaAhorro**: Savings account with interest
+    - **CuentaCorriente**: Checking account
+  </Card>
+</CardGroup>
+
+## Key Features
+
+The banking system demonstrates:
+
+- **Account Management**: Deposits, withdrawals, and transfers
+- **Transaction History**: Automatic logging of all operations
+- **ATM Operations**: Secure access with PIN validation
+- **Interest Calculation**: Automatic interest for savings accounts
+- **Multiple Accounts**: Clients can own multiple accounts
+
+## Exercise Structure
+
+<CardGroup cols={3}>
+  <Card title="Classes Basics" icon="code" href="./classes-basics">
+    Learn fundamental class structure, properties, methods, and constructors
+  </Card>
+  
+  <Card title="Banking System" icon="building-columns" href="./banking-system">
+    Explore the complete banking system implementation
+  </Card>
+  
+  <Card title="Inheritance" icon="diagram-project" href="./inheritance">
+    Understand inheritance with specialized account types
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+The exercise files are located in `scripts/POO/ejercicio-banco/`. Each class demonstrates different OOP concepts:
+
+```php
+// Example: Creating a client and account
+$cliente = new Cliente('Juan', 'Pérez', '12345678');
+$cuenta = new CuentaBanco('0102001234567890', 'ahorro', $cliente, '1234', 1000);
+$cuenta->depositar(500);
+echo $cuenta->getSaldo(); // 1500
+```
+
+<Note>
+  Start with **Classes Basics** to understand fundamental concepts, then move to the **Banking System** to see them in action.
+</Note>

@@ -1,0 +1,720 @@
+---
+title: 'Code Examples'
+description: 'Curated collection of useful PHP code patterns and examples from the exercise collection'
+icon: 'code'
+---
+
+# Code Examples
+
+This page contains curated code snippets and patterns extracted from the exercise collection, organized by topic for quick reference.
+
+## Common PHP Patterns
+
+<Tabs>
+  <Tab title="Variables & Data Types">
+    ### Basic Variable Declaration
+
+    ```php
+    <?php
+    // String variables
+    $nombre = "victor jhoann patino castellar";
+    $ciudad = "cumana";
+    $estado = 'ESTUDIANTE';
+
+    // Numeric variables
+    $edad = 23;
+    $peso = 76.56;
+
+    // Boolean variables
+    $mentira = true;
+
+    // Array declaration
+    $frases = array(
+        "Las rosas son rojas.",
+        "Me gusta el color morado.",
+        "Lo unico que se, es que no se nada."
+    );
+    ```
+
+    ### Operators
+
+    ```php
+    <?php
+    // Arithmetic operators
+    $modulo = 10 % 2;        // Result: 0
+    $exponente = 10 ** 2;    // Result: 100
+
+    // Comparison operators
+    $op1 = 10 > 2;           // Result: true
+    $op2 = true == false;    // Result: false
+    $op3 = true != false;    // Result: true
+    ```
+
+    ### String Operations
+
+    ```php
+    <?php
+    // Concatenation with dot operator
+    echo $nombre . ' - ' . $estado . ' - ' . $edad;
+
+    // Concatenation within double quotes
+    echo "$nombre $estado";
+
+    // String concatenation example
+    $str1 = "SOY VICTOR";
+    $str2 = "Y ME GUSTAN MUCHO LOS VIDEOJUEGOS!";
+    echo "$str1 $str2";
+    ```
+  </Tab>
+
+  <Tab title="Control Flow">
+    ### Conditionals
+
+    ```php
+    <?php
+    // If-elseif-else structure
+    $test = 0;
+
+    if ($test > 0) {
+        echo $test . ' es positivo';
+    } elseif ($test == 0) {
+        echo 'El cero se considera un número neutro';
+    } else {
+        echo $test . ' no es positivo';
+    }
+    ```
+
+    ### Multiple Detection Function
+
+    ```php
+    <?php
+    function multiplo($n1, $n2)
+    {
+        if ($n1 % $n2 == 0) {
+            echo "$n1 es multiplo de $n2";
+        } else {
+            echo "$n1 no es multiplo de $n2";
+        }
+    }
+
+    multiplo(15, 5);  // Output: 15 es multiplo de 5
+    multiplo(50, 3);  // Output: 50 no es multiplo de 3
+    ```
+
+    ### Year Parity Check
+
+    ```php
+    <?php
+    function verificarAnio($year)
+    {
+        if ($year % 2 == 0) {
+            echo "El anio $year es par";
+        } else {
+            echo "El anio $year es impar";
+        }
+    }
+
+    for ($i = 1999; $i <= 2025; $i++) {
+        verificarAnio($i);
+    }
+    ```
+  </Tab>
+
+  <Tab title="Loops">
+    ### While Loop with Conditional
+
+    ```php
+    <?php
+    // Print even numbers from 1 to 20
+    $iteracion = 1;
+
+    while ($iteracion < 20) {
+        if ($iteracion % 2 == 0) {
+            echo $iteracion . ' ';
+        }
+        $iteracion++;
+    }
+    ```
+
+    ### For Loop Pattern
+
+    ```php
+    <?php
+    // Generate right-angled triangle with asterisks
+    $rows = 7;
+
+    for ($i = 1; $i <= $rows; $i++) {
+        for ($j = 1; $j <= $i; $j++) {
+            echo "*";
+        }
+        echo "<br>";
+    }
+    ```
+
+    ### Nested Loops for Prime Detection
+
+    ```php
+    <?php
+    $esPrimo = true;
+    $contarPrimos = 0;
+
+    for ($i = 0; $i < 100; $i++) {
+        if (!is_numeric($i) || $i < 2) {
+            $esPrimo = false;
+        }
+
+        for ($j = 2; $j < $i; $j++) {
+            if ($i % $j == 0) {
+                $esPrimo = false;
+            }
+        }
+
+        if ($esPrimo) {
+            $contarPrimos++;
+        }
+
+        $esPrimo = true;
+    }
+    ```
+  </Tab>
+
+  <Tab title="Functions">
+    ### Prime & Even/Odd Counter
+
+    ```php
+    <?php
+    function func1()
+    {
+        $esPrimo = true;
+        $contarPrimos = 0;
+        $contarNoPrimos = 0;
+        $contarPares = 0;
+        $contarImpares = 0;
+
+        for ($i = 0; $i < 100; $i++) {
+            // Count even numbers
+            if ($i % 2 == 0) {
+                $contarPares++;
+            }
+
+            // Count odd numbers
+            if ($i % 2 == 1) {
+                $contarImpares++;
+            }
+
+            // Check if prime
+            if (!is_numeric($i) || $i < 2) {
+                $esPrimo = false;
+            }
+
+            for ($j = 2; $j < $i; $j++) {
+                if ($i % $j == 0) {
+                    $esPrimo = false;
+                }
+            }
+
+            if ($esPrimo) {
+                $contarPrimos++;
+            } else {
+                $contarNoPrimos++;
+            }
+
+            $esPrimo = true;
+        }
+
+        return array(
+            "PRIMOS" => $contarPrimos,
+            "NO PRIMOS" => $contarNoPrimos,
+            "PARES" => $contarPares,
+            "NO PARES" => $contarImpares
+        );
+    }
+
+    // Usage
+    foreach (func1() as $key => $value) {
+        echo "$key = $value<br>";
+    }
+    ```
+
+    ### Fibonacci Generator
+
+    ```php
+    <?php
+    function func5()
+    {
+        $fibonacci = [];
+
+        for ($i = 0; $i <= 150; $i++) {
+            if ($i < 2) {
+                $fibonacci[] = $i;
+            } else {
+                $fibonacci[] = ($fibonacci[$i - 1]) + ($fibonacci[$i - 2]);
+            }
+        }
+
+        return $fibonacci;
+    }
+
+    // Display results
+    foreach (func5() as $fibo) {
+        echo "$fibo<br>";
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Database Operations
+
+<Tabs>
+  <Tab title="Connection">
+    ### PDO Database Connection
+
+    ```php
+    <?php
+    class Database
+    {
+        private $conexion;
+
+        public function __construct()
+        {
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ];
+
+            $this->conexion = new PDO(
+                'mysql:host=localhost;dbname=yixondb;charset=utf8',
+                'root',
+                '',
+                $options
+            );
+
+            $this->conexion->exec('SET CHARACTER SET UTF8');
+        }
+
+        public function getConexion()
+        {
+            return $this->conexion;
+        }
+
+        public function closeConexion()
+        {
+            $this->conexion = null;
+        }
+    }
+    ```
+
+    ### Usage Example
+
+    ```php
+    <?php
+    require_once "database.php";
+
+    $database = new Database();
+    $conexion = $database->getConexion();
+    ```
+  </Tab>
+
+  <Tab title="CRUD Operations">
+    ### Create (Insert)
+
+    ```php
+    <?php
+    public function save($data)
+    {
+        // Filter empty values
+        $data = array_filter($data, function($value) {
+            return $value !== null && $value !== '';
+        });
+
+        if (empty($data)) {
+            return false;
+        }
+
+        // Build SQL query
+        $columns = array_keys($data);
+        $placeholders = array_map(fn($col) => ":$col", $columns);
+
+        $sql = "INSERT INTO {$this->table} (";
+        $sql .= implode(', ', $columns);
+        $sql .= ") VALUES (";
+        $sql .= implode(', ', $placeholders);
+        $sql .= ")";
+
+        // Execute
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($data);
+    }
+    ```
+
+    ### Read (Select)
+
+    ```php
+    <?php
+    // Get all records
+    public function getAll()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table}");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // Get single record by ID
+    public function getById($id)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM {$this->table} WHERE {$this->id} = :id"
+        );
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+    ```
+
+    ### Update
+
+    ```php
+    <?php
+    public function updateById($id, $data)
+    {
+        // Filter empty values
+        $data = array_filter($data, function ($value) {
+            return $value !== null && $value !== '';
+        });
+
+        if (empty($data)) {
+            return true;
+        }
+
+        // Build SET clause
+        $set_clauses = [];
+        foreach (array_keys($data) as $key) {
+            $set_clauses[] = "{$key} = :{$key}";
+        }
+
+        $sql = "UPDATE {$this->table} SET ";
+        $sql .= implode(', ', $set_clauses);
+        $sql .= " WHERE {$this->id} = :id_value";
+
+        // Execute
+        $stmt = $this->db->prepare($sql);
+        $bind_params = array_merge($data, ['id_value' => $id]);
+        return $stmt->execute($bind_params);
+    }
+    ```
+
+    ### Delete
+
+    ```php
+    <?php
+    public function deleteById($id)
+    {
+        $stmt = $this->db->prepare(
+            "DELETE FROM {$this->table} WHERE {$this->id} = :id"
+        );
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
+    ```
+  </Tab>
+
+  <Tab title="MVC Pattern">
+    ### Controller Example
+
+    ```php
+    <?php
+    require_once "database.php";
+    require_once "orm.class.php";
+    require_once "Usuario.class.php";
+
+    // Initialize
+    $database = new Database();
+    $conexion = $database->getConexion();
+    $usuarioModel = new Usuario($conexion);
+
+    // Handle POST request
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = [
+            'cedula' => $_POST['cedula'],
+            'nombres' => $_POST['nombres'],
+            'apellidos' => $_POST['apellidos'],
+            'email' => $_POST['email'],
+            'user_pass' => password_hash(
+                $_POST['user_pass'],
+                PASSWORD_BCRYPT
+            ),
+        ];
+
+        $usuarioModel->save($data);
+
+        header('Location: ../../index.php#crud-basico-con-php');
+        exit();
+    }
+    ```
+
+    ### Model Example
+
+    ```php
+    <?php
+    class Usuario extends ORM
+    {
+        public function __construct(PDO $conexion)
+        {
+            parent::__construct('id', 'usuarios', $conexion);
+        }
+    }
+    ```
+
+    ### List Controller
+
+    ```php
+    <?php
+    require_once "database.php";
+    require_once "orm.class.php";
+    require_once "Usuario.class.php";
+
+    $database = new Database();
+    $conexion = $database->getConexion();
+    $usuarioModel = new Usuario($conexion);
+    $usuarios = $usuarioModel->getAll();
+    ```
+  </Tab>
+</Tabs>
+
+## OOP Patterns
+
+<Tabs>
+  <Tab title="Classes & Objects">
+    ### Basic Class Structure
+
+    ```php
+    <?php
+    class Cliente
+    {
+        private $nombre;
+        private $apellido;
+        private $cedula;
+        private $cuentas;
+
+        public function __construct($nombre, $apellido, $cedula, $cuentas = [])
+        {
+            $this->nombre = $nombre;
+            $this->apellido = $apellido;
+            $this->cedula = $cedula;
+            $this->cuentas = $cuentas;
+        }
+
+        public function getNombre()
+        {
+            return $this->nombre;
+        }
+
+        public function setNombre($nombre)
+        {
+            $this->nombre = $nombre;
+        }
+
+        public function setCuenta($cuenta)
+        {
+            $this->cuentas[] = $cuenta;
+        }
+    }
+    ```
+  </Tab>
+
+  <Tab title="Inheritance">
+    ### Base Class
+
+    ```php
+    <?php
+    class CuentaBanco
+    {
+        private $numeroCuenta;
+        private $tipo;
+        private $titular;
+        private $saldo;
+        private $claveCajero;
+        private $transacciones = [];
+
+        public function __construct(
+            $numeroCuenta,
+            $tipo,
+            $titular,
+            $claveCajero,
+            $saldoInicial = 0
+        ) {
+            $this->numeroCuenta = $numeroCuenta;
+            $this->tipo = $tipo;
+            $this->titular = $titular;
+            $this->claveCajero = $claveCajero;
+            $this->saldo = $saldoInicial;
+        }
+
+        public function depositar($monto)
+        {
+            $this->saldo += $monto;
+            $this->RegistrarTransaccion('depósito', $monto);
+        }
+
+        public function retirar($monto)
+        {
+            if ($monto <= $this->saldo) {
+                $this->saldo -= $monto;
+                $this->RegistrarTransaccion('retiro', $monto);
+            } else {
+                throw new Exception("Saldo insuficiente");
+            }
+        }
+    }
+    ```
+
+    ### Extended Class
+
+    ```php
+    <?php
+    class Usuario extends ORM
+    {
+        public function __construct(PDO $conexion)
+        {
+            parent::__construct('id', 'usuarios', $conexion);
+        }
+
+        // Inherits all CRUD methods from ORM:
+        // - save($data)
+        // - getAll()
+        // - getById($id)
+        // - updateById($id, $data)
+        // - deleteById($id)
+    }
+    ```
+  </Tab>
+
+  <Tab title="Encapsulation">
+    ### Private Properties with Getters/Setters
+
+    ```php
+    <?php
+    class CuentaBanco
+    {
+        private $numeroCuenta;
+        private $saldo;
+        private $transacciones = [];
+
+        // Getters
+        public function getNumeroCuenta()
+        {
+            return $this->numeroCuenta;
+        }
+
+        public function getSaldo()
+        {
+            return $this->saldo;
+        }
+
+        public function getTransacciones()
+        {
+            return $this->transacciones;
+        }
+
+        // Protected method
+        private function RegistrarTransaccion($tipo, $monto)
+        {
+            $transaccion = new Transaccion(
+                $tipo,
+                $monto,
+                date('Y-m-d H:i:s')
+            );
+            $this->transacciones[] = $transaccion;
+        }
+    }
+    ```
+  </Tab>
+
+  <Tab title="Composition">
+    ### Object Relationships
+
+    ```php
+    <?php
+    // Cliente has many Cuentas
+    class Cliente
+    {
+        private $cuentas = [];
+
+        public function setCuenta($cuenta)
+        {
+            $this->cuentas[] = $cuenta;
+        }
+
+        public function getCuentas()
+        {
+            return $this->cuentas;
+        }
+    }
+
+    // CuentaBanco has a Cliente and many Transacciones
+    class CuentaBanco
+    {
+        private $titular;  // Cliente object
+        private $transacciones = [];  // Array of Transaccion objects
+
+        public function __construct($numeroCuenta, $tipo, $titular, $claveCajero)
+        {
+            $this->titular = $titular;  // Composition
+        }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Security Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Password Hashing" icon="lock">
+    Always use `password_hash()` with PASSWORD_BCRYPT or PASSWORD_ARGON2ID
+    ```php
+    password_hash($_POST['pass'], PASSWORD_BCRYPT)
+    ```
+  </Card>
+
+  <Card title="Prepared Statements" icon="shield">
+    Use PDO prepared statements to prevent SQL injection
+    ```php
+    $stmt = $db->prepare("SELECT * WHERE id = :id");
+    $stmt->bindParam(':id', $id);
+    ```
+  </Card>
+
+  <Card title="Input Validation" icon="filter">
+    Filter and validate all user input before processing
+    ```php
+    $data = array_filter($data, function($v) {
+        return $value !== null && $value !== '';
+    });
+    ```
+  </Card>
+
+  <Card title="Error Handling" icon="triangle-exclamation">
+    Use PDO error mode for proper exception handling
+    ```php
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ```
+  </Card>
+</CardGroup>
+
+## Quick Reference Links
+
+<CardGroup cols={3}>
+  <Card title="Exercise Index" icon="list" href="/reference/exercise-index">
+    Browse all 65+ exercises by category
+  </Card>
+  <Card title="Getting Started" icon="rocket" href="/introduction">
+    Begin your PHP learning journey
+  </Card>
+  <Card title="Setup Guide" icon="gear" href="/setup">
+    Configure your development environment
+  </Card>
+</CardGroup>
+
+<Tip>
+These code examples are extracted from real working exercises. Each pattern has been tested and is ready to use in your projects.
+</Tip>

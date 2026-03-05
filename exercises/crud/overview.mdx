@@ -1,0 +1,194 @@
+---
+title: 'CRUD & Database Overview'
+description: 'Learn how to build a complete CRUD application with PHP using MVC architecture and ORM patterns'
+icon: 'database'
+---
+
+## Introduction
+
+This collection of exercises teaches you how to build a complete **CRUD (Create, Read, Update, Delete)** application using PHP with a clean MVC (Model-View-Controller) architecture and a custom ORM (Object-Relational Mapping) pattern.
+
+## What You'll Learn
+
+Through these exercises, you'll master:
+
+- Building database-driven applications with MySQL
+- Implementing the MVC architectural pattern
+- Creating a reusable ORM class for database operations
+- Handling user authentication with password hashing
+- Managing database connections with PDO
+- Processing HTTP requests and form data
+
+## The User Management System
+
+The exercises implement a complete **user management system** with the following features:
+
+- **User Registration**: Create new user accounts with validation
+- **User Listing**: Display all registered users in a table
+- **User Updates**: Modify existing user information
+- **User Deletion**: Remove users from the database
+
+### Technology Stack
+
+- **Backend**: PHP 8.2+
+- **Database**: MySQL/MariaDB
+- **Architecture**: MVC Pattern
+- **Data Layer**: Custom ORM Class
+- **Security**: PDO Prepared Statements, Password Hashing (bcrypt)
+
+## MVC Architecture
+
+The application follows a clean separation of concerns:
+
+```
+┌─────────────┐
+│    View     │  (HTML Forms & Tables)
+│   .view.php │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ Controller  │  (Business Logic)
+│.controller  │
+│    .php     │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│    Model    │  (ORM + Database)
+│  .class.php │
+└─────────────┘
+```
+
+### Components
+
+<CardGroup cols={2}>
+  <Card title="Model" icon="cube" href="./orm-pattern">
+    ORM class providing database abstraction and the Usuario model
+  </Card>
+  
+  <Card title="View" icon="eye">
+    HTML forms and templates for user interaction
+  </Card>
+  
+  <Card title="Controller" icon="gear" href="./operations">
+    Request handlers that connect views to models
+  </Card>
+  
+  <Card title="Database" icon="server" href="./database-setup">
+    MySQL schema and connection configuration
+  </Card>
+</CardGroup>
+
+## Project Structure
+
+```
+CRUD/
+├── database.php                    # Database connection class
+├── orm.class.php                   # Base ORM with CRUD methods
+├── usuario.class.php               # User model extending ORM
+├── registroUsuario.controller.php  # Create user
+├── registroUsuario.view.php        # Registration form
+├── listarUsuario.controller.php    # Read users
+├── listarUsuario.view.php          # Users table
+├── modificarUsuario.controller.php # Update user
+├── modificarUsuario.view.php       # Edit form
+├── borrarUsuario.controller.php    # Delete user
+├── borrarUsuario.view.php          # Delete confirmation
+└── yixondb.sql                     # Database schema
+```
+
+## Database Schema
+
+The system uses a single `usuarios` table with the following structure:
+
+| Column     | Type         | Constraints              |
+|------------|--------------|-------------------------|
+| id         | INT(11)      | PRIMARY KEY, AUTO_INCREMENT |
+| cedula     | VARCHAR(8)   | UNIQUE, NOT NULL        |
+| nombres    | VARCHAR(255) | NOT NULL                |
+| apellidos  | VARCHAR(255) | NOT NULL                |
+| email      | VARCHAR(255) | UNIQUE, NOT NULL        |
+| user_pass  | VARCHAR(18)  | UNIQUE, NOT NULL        |
+
+<Note>
+Passwords are hashed using PHP's `password_hash()` with bcrypt algorithm before storage.
+</Note>
+
+## Getting Started
+
+<Steps>
+  <Step title="Set up the database">
+    Import the SQL schema and configure the database connection
+    
+    [Database Setup Guide →](./database-setup)
+  </Step>
+  
+  <Step title="Understand the ORM pattern">
+    Learn how the custom ORM class abstracts database operations
+    
+    [ORM Pattern Guide →](./orm-pattern)
+  </Step>
+  
+  <Step title="Implement CRUD operations">
+    Build Create, Read, Update, and Delete functionality
+    
+    [CRUD Operations Guide →](./operations)
+  </Step>
+</Steps>
+
+## Key Concepts
+
+### PDO (PHP Data Objects)
+
+The application uses PDO for database interactions, providing:
+- Database abstraction layer
+- Prepared statements to prevent SQL injection
+- Exception-based error handling
+- Support for different database drivers
+
+### Object-Oriented PHP
+
+The codebase demonstrates:
+- Class inheritance (Usuario extends ORM)
+- Encapsulation with protected properties
+- Constructor dependency injection
+- Method chaining and return values
+
+### Security Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Prepared Statements" icon="shield">
+    All SQL queries use PDO prepared statements with parameter binding
+  </Card>
+  
+  <Card title="Password Hashing" icon="lock">
+    Passwords are hashed with bcrypt using `PASSWORD_BCRYPT` constant
+  </Card>
+  
+  <Card title="Input Filtering" icon="filter">
+    Empty values are filtered before database operations
+  </Card>
+  
+  <Card title="HTTP Redirects" icon="arrow-right">
+    POST requests redirect after processing to prevent resubmission
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+Ready to dive deeper? Choose your path:
+
+<CardGroup cols={3}>
+  <Card title="Database Setup" icon="database" href="./database-setup">
+    Configure MySQL and import the schema
+  </Card>
+  
+  <Card title="ORM Pattern" icon="layer-group" href="./orm-pattern">
+    Explore the custom ORM implementation
+  </Card>
+  
+  <Card title="CRUD Operations" icon="list-check" href="./operations">
+    Learn each operation in detail
+  </Card>
+</CardGroup>

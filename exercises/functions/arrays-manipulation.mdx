@@ -1,0 +1,344 @@
+---
+title: 'Arrays Manipulation'
+description: 'Master PHP array operations through Fibonacci sequences, random number analysis, and data processing'
+---
+
+## Working with Arrays in PHP
+
+Arrays are fundamental data structures that store collections of values. These exercises demonstrate various array manipulation techniques including generation, iteration, and analysis.
+
+## Exercise 1: Fibonacci Sequence Generator
+
+The Fibonacci sequence is a series where each number is the sum of the two preceding ones. This function generates the first 150 Fibonacci numbers.
+
+### Implementation
+
+```php funcion-05.php
+function func5()
+{
+    $fibonacci = [];
+
+    for ($i = 0; $i <= 150; $i++) {
+        if ($i < 2) {
+            $fibonacci[] = $i;
+        } else {
+            $fibonacci[] = ($fibonacci[$i - 1]) + ($fibonacci[$i - 2]);
+        }
+    }
+
+    return $fibonacci;
+}
+```
+
+### Usage Example
+
+```php
+foreach (func5() as $fibo) {
+    echo "$fibo\n";
+}
+```
+
+### Output (First 10 Numbers)
+
+```
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+```
+
+<Note>
+**Fibonacci Formula**: F(n) = F(n-1) + F(n-2), where F(0) = 0 and F(1) = 1
+
+This sequence appears frequently in nature, mathematics, and computer science algorithms.
+</Note>
+
+### Array Building Techniques
+
+<Tabs>
+  <Tab title="Array Push Operator">
+    The `[]` operator adds elements to the end of an array:
+    
+    ```php
+    $fibonacci[] = $i;
+    // Equivalent to: array_push($fibonacci, $i);
+    ```
+    
+    This is the most efficient way to append values to an array in PHP.
+  </Tab>
+  
+  <Tab title="Array Indexing">
+    Access array elements by their numeric index:
+    
+    ```php
+    $fibonacci[$i - 1]  // Previous element
+    $fibonacci[$i - 2]  // Element before previous
+    ```
+    
+    PHP arrays are zero-indexed, so the first element is at position 0.
+  </Tab>
+  
+  <Tab title="Initial Values">
+    The first two Fibonacci numbers are special cases:
+    
+    ```php
+    if ($i < 2) {
+        $fibonacci[] = $i;  // F(0)=0, F(1)=1
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Exercise 2: Random Number Analysis
+
+This function generates 100 random numbers and analyzes them to count positives, negatives, and zeros.
+
+### Implementation
+
+```php funcion-04.php
+function func4()
+{
+    $contarPositivos = 0;
+    $contarNegativos = 0;
+    $contarCeros = 0;
+    $number = 0;
+
+    for ($i = 0; $i < 100; $i++) {
+        // Generate random number between -100 and 100
+        $number = mt_rand(-100, 100);
+
+        if ($number > 0) {
+            $contarPositivos++;
+        } elseif ($number < 0) {
+            $contarNegativos++;
+        } else {
+            $contarCeros++;
+        }
+
+        echo "$number \t";
+    }
+
+    echo "\n";
+
+    $cuentas = array(
+        "POSITIVOS" => $contarPositivos,
+        "NEGATIVOS" => $contarNegativos,
+        "CEROS" => $contarCeros
+    );
+
+    return $cuentas;
+}
+```
+
+### Usage Example
+
+```php
+foreach (func4() as $key => $value) {
+    echo "$key = $value\n";
+}
+```
+
+### Example Output
+
+```
+45  -23  88  0  -67  12  ... (100 numbers)
+
+POSITIVOS = 48
+NEGATIVOS = 51
+CEROS = 1
+```
+
+<Note>
+**mt_rand() vs rand()**
+
+`mt_rand()` uses the Mersenne Twister algorithm, which is faster and produces better random distributions than the older `rand()` function.
+
+```php
+mt_rand(-100, 100)  // Range: -100 to 100 inclusive
+```
+</Note>
+
+### Associative Arrays
+
+<CodeGroup>
+
+```php Associative Array Creation
+$cuentas = array(
+    "POSITIVOS" => $contarPositivos,
+    "NEGATIVOS" => $contarNegativos,
+    "CEROS" => $contarCeros
+);
+```
+
+```php Modern Syntax
+$cuentas = [
+    "POSITIVOS" => $contarPositivos,
+    "NEGATIVOS" => $contarNegativos,
+    "CEROS" => $contarCeros
+];
+```
+
+```php Accessing Values
+echo $cuentas["POSITIVOS"];  // Access by key
+echo $cuentas["NEGATIVOS"];
+echo $cuentas["CEROS"];
+```
+
+```php Iterating
+foreach ($cuentas as $key => $value) {
+    echo "$key = $value\n";
+}
+```
+
+</CodeGroup>
+
+## Exercise 3: Multiple Detection with Formatting
+
+This function identifies multiples of 2 and 5 among the first 300 numbers, demonstrating conditional output formatting.
+
+### Implementation
+
+```php funcion-06.php
+function func6()
+{
+    for ($i = 1; $i <= 300; $i++) {
+        if ($i % 2 == 0 && $i % 5 == 0) {
+            echo "$i ==> Multiple of 2 AND 5\n";
+        } elseif ($i % 2 == 0) {
+            echo "$i ==> Multiple of 2\n";
+        } elseif ($i % 5 == 0) {
+            echo "$i ==> Multiple of 5\n";
+        } else {
+            echo "$i\n";
+        }
+    }
+}
+```
+
+### Output Pattern
+
+```
+1
+2 ==> Multiple of 2
+3
+4 ==> Multiple of 2
+5 ==> Multiple of 5
+6 ==> Multiple of 2
+7
+8 ==> Multiple of 2
+9
+10 ==> Multiple of 2 AND 5
+...
+```
+
+<Note>
+**Logic Order Matters**
+
+The condition `$i % 2 == 0 && $i % 5 == 0` must come first. If we checked for multiples of 2 first, numbers like 10, 20, 30 would only be labeled as multiples of 2, never reaching the "both" condition.
+</Note>
+
+## Exercise 4: Factorial Calculation
+
+This function calculates factorials for the first 30 numbers, demonstrating nested loops and accumulation.
+
+### Implementation
+
+```php funcion-07.php
+function func7()
+{
+    for ($j = 0; $j < 30; $j++) {
+        $factorial = 1;
+        
+        for ($i = $j; $i >= 1; $i--) {
+            $factorial *= $i;
+        }
+        
+        echo "!$j = $factorial\n";
+    }
+}
+```
+
+### Output Examples
+
+```
+!0 = 1
+!1 = 1
+!2 = 2
+!3 = 6
+!4 = 24
+!5 = 120
+!6 = 720
+!7 = 5040
+```
+
+<Tabs>
+  <Tab title="Factorial Definition">
+    The factorial of n (written as n!) is the product of all positive integers less than or equal to n:
+    
+    ```
+    5! = 5 × 4 × 3 × 2 × 1 = 120
+    ```
+    
+    By convention, 0! = 1.
+  </Tab>
+  
+  <Tab title="Accumulation Pattern">
+    Start with 1 and multiply by each number:
+    
+    ```php
+    $factorial = 1;  // Identity for multiplication
+    for ($i = $j; $i >= 1; $i--) {
+        $factorial *= $i;  // Multiply and assign
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Large Numbers">
+    Factorials grow extremely fast:
+    
+    ```
+    10! = 3,628,800
+    20! = 2,432,902,008,176,640,000
+    ```
+    
+    For large values, consider using `gmp_fact()` or `bcmath` for arbitrary precision.
+  </Tab>
+</Tabs>
+
+## Key Concepts
+
+<CardGroup cols={2}>
+  <Card title="Array Building" icon="layer-group">
+    Use `[]` operator or `array_push()` to add elements. Initialize with `[]` or `array()`.
+  </Card>
+  
+  <Card title="Associative Arrays" icon="key">
+    Store key-value pairs for labeled data. Access with `$array['key']` syntax.
+  </Card>
+  
+  <Card title="Random Numbers" icon="dice">
+    Use `mt_rand($min, $max)` for better performance and distribution than `rand()`.
+  </Card>
+  
+  <Card title="Accumulation" icon="calculator">
+    Initialize accumulator (0 for sum, 1 for product), then update in loop.
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+1. **Initialize arrays** before use: `$array = [];`
+2. **Use meaningful keys** in associative arrays
+3. **Check array bounds** when accessing by index
+4. **Consider memory** for large arrays (150+ elements)
+5. **Use foreach** for iteration when you don't need the index
+
+---
+
+**Next:** Continue to [String Operations](/exercises/functions/string-operations) to master text processing and pattern matching.

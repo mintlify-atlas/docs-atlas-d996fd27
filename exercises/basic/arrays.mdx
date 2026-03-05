@@ -1,0 +1,482 @@
+---
+title: "Array Exercises"
+description: "Master array manipulation, sorting, filtering, and data structure operations in PHP"
+---
+
+# Array Exercises
+
+This section covers exercises 26-35, focusing on arrays, data structures, and collection manipulation in PHP.
+
+## Exercise 26: Number Classification
+
+Classify numbers as small, medium, or large using conditionals.
+
+```php
+function determinarNum($num) {
+    if (!is_numeric($num)) {
+        return 0;
+    }
+    
+    if ($num < 10) {
+        echo "$num es un numero pequeño";
+    } elseif ($num >= 10 && $num <= 100) {
+        echo "$num es un numero mediano";
+    } elseif ($num > 100) {
+        echo "$num - NUMERO GRANDE";
+    }
+}
+
+determinarNum(6);    // pequeño
+determinarNum(13);   // mediano
+determinarNum(113);  // grande
+determinarNum(1500); // grande
+```
+
+<Note>
+  This exercise includes input validation with `is_numeric()` to ensure the parameter is actually a number before processing.
+</Note>
+
+## Exercise 27: Palindrome Detection
+
+Check if a word is a palindrome using array manipulation.
+
+```php
+function determinarPalV($string) {
+    $aux = str_split($string);
+    $reverse = array_reverse($aux);
+    
+    $validate = false;
+    foreach ($aux as $position => $letra) {
+        if ($letra === $reverse[$position]) {
+            $validate = true;
+        }
+    }
+    
+    if ($validate) {
+        echo "'$string' es un palindromo";
+        print_r($aux);
+        echo " ===> ";
+        print_r($reverse);
+    } else {
+        echo "'$string' no es un palindromo";
+    }
+}
+
+determinarPalV("ANA");        // palindrome
+determinarPalV("reconocer");  // palindrome
+determinarPalV("casa");       // not palindrome
+determinarPalV("salas");      // palindrome
+```
+
+<Accordion title="Array Functions Used">
+  - `str_split($string)`: Converts string to array of characters
+  - `array_reverse($array)`: Returns array with elements in reverse order
+  - These functions make it easy to compare original and reversed versions
+</Accordion>
+
+## Exercise 28: Shopping Cart with Discounts
+
+Apply discounts to products in an array.
+
+```php
+$carrito = array(
+    "arina PAN" => 30.00,
+    "leche" => 60.00,
+    "mantequilla" => 25.25
+);
+
+echo "Carrito original:";
+foreach ($carrito as $product => $price) {
+    echo "$product => $price";
+}
+
+// Apply 10% discount to each product
+foreach ($carrito as $product => $price) {
+    $carrito[$product] = $price - ($price * 0.1);
+}
+
+echo "Carrito después del 10% de descuento:";
+foreach ($carrito as $product => $price) {
+    echo "$product => $price";
+}
+
+// Check if total qualifies for additional discount
+$totalPagar = array_sum($carrito);
+echo "Total a pagar: $totalPagar";
+
+if ($totalPagar > 100) {
+    $totalPagar = $totalPagar - ($totalPagar * 0.2);
+    echo "Nuevo total con 20% descuento: $totalPagar";
+}
+```
+
+<Tabs>
+  <Tab title="Array Modification">
+    You can modify array values directly in a foreach loop by using the product name as the key:
+    ```php
+    $carrito[$product] = $newPrice;
+    ```
+  </Tab>
+  <Tab title="Array Functions">
+    `array_sum()` adds all values in an array - perfect for calculating totals:
+    ```php
+    $total = array_sum($prices);
+    ```
+  </Tab>
+</Tabs>
+
+## Exercise 29: Print Even Numbers
+
+Display even numbers from 1 to 20 using a loop.
+
+```php
+for ($i = 1; $i <= 20; $i++) {
+    if ($i % 2 == 0) {
+        echo $i . " ";
+    }
+}
+// Output: 2 4 6 8 10 12 14 16 18 20
+```
+
+<Warning>
+  Note: The original code has `$i % 2 == 1` which actually prints odd numbers. The corrected version above prints even numbers as intended.
+</Warning>
+
+## Exercise 30: Factorial Calculation
+
+Calculate factorial using a loop.
+
+```php
+function calcFactorial($num) {
+    echo "Factorial de $num ==> !$num = ";
+    $factorial = 1;
+    
+    for ($i = $num; $i >= 1; $i--) {
+        $factorial *= $i;
+        echo " $num * $i ";
+    }
+    
+    echo "!$num = $factorial";
+}
+
+calcFactorial(4);  // 4! = 24
+calcFactorial(7);  // 7! = 5040
+calcFactorial(13); // 13! = 6227020800
+```
+
+<Accordion title="Factorial Explained">
+  Factorial (n!) is the product of all positive integers less than or equal to n:
+  - 4! = 4 × 3 × 2 × 1 = 24
+  - 5! = 5 × 4 × 3 × 2 × 1 = 120
+  - 0! = 1 (by definition)
+  
+  Factorials grow extremely fast - 13! is already over 6 billion!
+</Accordion>
+
+## Exercise 31: Fibonacci Sequence
+
+Generate Fibonacci numbers using an array.
+
+```php
+$fibonacci = [];
+
+for ($i = 0; $i <= 10; $i++) {
+    if ($i < 2) {
+        array_push($fibonacci, $i);
+    } else {
+        array_push($fibonacci, ($fibonacci[$i - 1] + $fibonacci[$i - 2]));
+    }
+}
+
+echo "Los 10 primeros números de Fibonacci: ";
+foreach ($fibonacci as $fib) {
+    echo " $fib ";
+}
+// Output: 0 1 1 2 3 5 8 13 21 34 55
+```
+
+<Tabs>
+  <Tab title="Fibonacci Logic">
+    Each number is the sum of the two preceding ones:
+    - Start: 0, 1
+    - Next: 0 + 1 = 1
+    - Next: 1 + 1 = 2
+    - Next: 1 + 2 = 3
+    - Next: 2 + 3 = 5
+    - And so on...
+  </Tab>
+  <Tab title="Array Building">
+    This solution builds the array dynamically:
+    1. First two numbers (0, 1) are added directly
+    2. Each subsequent number is calculated from the previous two
+    3. `array_push()` adds each new number to the array
+  </Tab>
+</Tabs>
+
+## Exercise 32: Cylinder Volume
+
+Calculate geometric values using mathematical functions.
+
+```php
+$radio = 5;
+$altura = 13;
+
+$volumen = round(pi() * pow($radio, 2) * $altura, 2);
+
+echo "Radio = $radio, Altura = $altura";
+echo "Volumen del cilindro: $volumen";
+```
+
+<Note>
+  PHP mathematical functions used:
+  - `pi()`: Returns the value of π (3.14159...)
+  - `pow($base, $exponent)`: Calculates base raised to the power of exponent
+  - `round($number, $precision)`: Rounds to specified decimal places
+</Note>
+
+## Exercise 33: Unit Conversion
+
+Convert kilometers to miles.
+
+```php
+$kilometros = 1;
+$millas = round($kilometros / 1.6093445, 4);
+
+echo "$kilometros km = $millas millas";
+// 1 km = 0.6214 miles
+```
+
+## Exercise 34: Grade Average
+
+Calculate average from an array of grades.
+
+```php
+$calificaciones = [4, 5, 4];
+
+$promedio = ($calificaciones[0] + $calificaciones[1] + $calificaciones[2]) / 3;
+
+if ($promedio > 6) {
+    echo "FELICIDADES, ES USTED UN ESTUDIANTE DESTACADO";
+} else {
+    echo "DEBES SEGUIR ESTUDIANDO, VAMOS BIEN";
+}
+```
+
+<Accordion title="Better Approach with array_sum()">
+  Instead of accessing each element individually, use `array_sum()`:
+  ```php
+  $promedio = array_sum($calificaciones) / count($calificaciones);
+  ```
+  This works with any array size automatically.
+</Accordion>
+
+## Exercise 35: Rectangle Perimeter
+
+Calculate perimeter using formula.
+
+```php
+$longitud = 13;
+$ancho = 5;
+
+$perimetro = round((2 * $longitud) + (2 * $ancho), 2);
+
+echo "Longitud = $longitud, Ancho = $ancho";
+echo "Perímetro = $perimetro";
+// Perimeter = 2l + 2w = 36
+```
+
+## Essential Array Functions
+
+<CardGroup cols={2}>
+  <Card title="Creating Arrays" icon="plus">
+    ```php
+    $arr = []; // Empty
+    $arr = [1, 2, 3]; // Indexed
+    $arr = ["key" => "value"]; // Associative
+    ```
+  </Card>
+  
+  <Card title="Adding Elements" icon="arrow-right">
+    ```php
+    array_push($arr, $value);
+    $arr[] = $value; // Shorthand
+    $arr["key"] = $value;
+    ```
+  </Card>
+  
+  <Card title="Removing Elements" icon="trash">
+    ```php
+    array_pop($arr); // Remove last
+    array_shift($arr); // Remove first
+    unset($arr[index]);
+    ```
+  </Card>
+  
+  <Card title="Array Information" icon="info">
+    ```php
+    count($arr); // Number of elements
+    in_array($value, $arr); // Check existence
+    array_key_exists($key, $arr);
+    ```
+  </Card>
+</CardGroup>
+
+## Array Manipulation Functions
+
+### Sorting
+
+```php
+$numbers = [5, 2, 8, 1, 9];
+
+sort($numbers);         // [1, 2, 5, 8, 9] - ascending
+rsort($numbers);        // [9, 8, 5, 2, 1] - descending
+
+$assoc = ["b" => 2, "a" => 1];
+asort($assoc);          // Sort by value, maintain keys
+ksort($assoc);          // Sort by key
+```
+
+### Filtering and Mapping
+
+```php
+// Filter array
+$numbers = [1, 2, 3, 4, 5, 6];
+$even = array_filter($numbers, function($n) {
+    return $n % 2 == 0;
+});
+// Result: [2, 4, 6]
+
+// Transform array
+$squared = array_map(function($n) {
+    return $n * $n;
+}, $numbers);
+// Result: [1, 4, 9, 16, 25, 36]
+```
+
+### Combining Arrays
+
+```php
+$arr1 = [1, 2, 3];
+$arr2 = [4, 5, 6];
+
+$combined = array_merge($arr1, $arr2);
+// Result: [1, 2, 3, 4, 5, 6]
+
+$keys = ["a", "b", "c"];
+$values = [1, 2, 3];
+$assoc = array_combine($keys, $values);
+// Result: ["a" => 1, "b" => 2, "c" => 3]
+```
+
+## Common Array Patterns
+
+<Accordion title="Iterating with foreach">
+  ```php
+  // Simple array
+  foreach ($array as $value) {
+      echo $value;
+  }
+  
+  // With index
+  foreach ($array as $index => $value) {
+      echo "$index: $value";
+  }
+  
+  // Associative array
+  foreach ($assoc as $key => $value) {
+      echo "$key = $value";
+  }
+  ```
+</Accordion>
+
+<Accordion title="Array Searching">
+  ```php
+  // Find value
+  $position = array_search($needle, $haystack);
+  
+  // Check if exists
+  if (in_array($value, $array)) {
+      echo "Found!";
+  }
+  
+  // Get first/last
+  $first = reset($array);
+  $last = end($array);
+  ```
+</Accordion>
+
+<Accordion title="Array Reduction">
+  ```php
+  // Sum all values
+  $total = array_sum($numbers);
+  
+  // Multiply all values
+  $product = array_product($numbers);
+  
+  // Custom reduction
+  $result = array_reduce($array, function($carry, $item) {
+      return $carry + $item;
+  }, 0);
+  ```
+</Accordion>
+
+## Multi-dimensional Arrays
+
+```php
+$matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+// Access elements
+echo $matrix[0][0]; // 1
+echo $matrix[1][2]; // 6
+
+// Iterate 2D array
+foreach ($matrix as $row) {
+    foreach ($row as $value) {
+        echo $value . " ";
+    }
+    echo "\n";
+}
+```
+
+## Practice Tips
+
+<Tip>
+  - Use `print_r()` or `var_dump()` to inspect array contents during development
+  - Remember that array indices start at 0
+  - Associative arrays are perfect for key-value data like user profiles or settings
+  - Use built-in array functions - they're optimized and well-tested
+  - Consider using `array_map()` and `array_filter()` instead of manual loops when possible
+</Tip>
+
+## Performance Considerations
+
+<Warning>
+  - Large arrays can consume significant memory
+  - Nested loops with arrays can be slow (O(n²) complexity)
+  - Use `isset()` to check array keys - it's faster than `array_key_exists()`
+  - Consider using iterators for very large datasets
+</Warning>
+
+## Summary
+
+You've now completed all 35 basic PHP exercises! You've learned:
+
+- **Conditionals**: Decision-making with if/else statements
+- **Loops**: Iteration patterns and repetitive operations
+- **Arrays**: Data structures, manipulation, and collection operations
+- **Functions**: Creating reusable code blocks
+- **Algorithms**: Classic problems like factorials, Fibonacci, and palindromes
+
+<CardGroup cols={2}>
+  <Card title="Review Exercises" icon="book" href="/exercises/basic/overview">
+    Return to the overview to review all exercise categories
+  </Card>
+  
+  <Card title="Advanced Topics" icon="rocket">
+    Ready for more? Explore intermediate PHP concepts like OOP, databases, and APIs
+  </Card>
+</CardGroup>

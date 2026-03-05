@@ -1,0 +1,375 @@
+---
+title: "Loop Exercises"
+description: "Master for and while loops, iteration patterns, and repetitive operations in PHP"
+---
+
+# Loop Exercises
+
+This section covers exercises 11-25, focusing on loops, iteration patterns, and repetitive operations in PHP.
+
+## Exercise 11: Display Numbers 1 to 10
+
+The simplest loop - display numbers from 1 to 10.
+
+```php
+for ($iterador = 1; $iterador <= 10; $iterador++) {
+    echo $iterador . " ";
+}
+// Output: 1 2 3 4 5 6 7 8 9 10
+```
+
+<Accordion title="For Loop Structure">
+  A `for` loop has three parts:
+  1. **Initialization**: `$iterador = 1` - sets starting value
+  2. **Condition**: `$iterador <= 10` - continues while true
+  3. **Increment**: `$iterador++` - updates variable each iteration
+</Accordion>
+
+## Exercise 12: Sum of First 100 Natural Numbers
+
+Calculate the sum of the first 100 natural numbers.
+
+```php
+$aux = 1;
+
+for ($i = 0; $i < 100; $i++) {
+    $sumatoria = $i + $aux;
+    echo "$i + $aux = $sumatoria";
+    $aux++;
+}
+
+// Alternative: Using mathematical formula
+$formula = (100 * (100 + 1)) / 2;
+echo "Using formula (n * (n + 1)) / 2: $formula";
+```
+
+<Tabs>
+  <Tab title="Iterative Approach">
+    Uses a loop to add numbers one by one. Good for understanding the process step-by-step.
+  </Tab>
+  <Tab title="Formula Approach">
+    Uses the mathematical formula: `n × (n + 1) ÷ 2`
+    
+    For n=100: `100 × 101 ÷ 2 = 5,050`
+    
+    Much faster and more efficient for large numbers.
+  </Tab>
+</Tabs>
+
+## Exercise 13: Multiplication Table
+
+Generate a multiplication table for any number.
+
+```php
+$aux = 5;
+
+for ($i = 1; $i <= 10; $i++) {
+    echo "$aux x $i = " . $aux * $i;
+}
+```
+
+<Note>
+  Change the `$aux` variable to generate multiplication tables for different numbers. This is a practical example of how loops can automate repetitive calculations.
+</Note>
+
+## Exercise 14: Count Vowels in a String
+
+Two approaches to counting vowels in text.
+
+<CodeGroup>
+```php Using Regular Expression
+$string = "Cuantas vocales hay aqui?";
+
+$totalVocales = preg_match_all('/[aeiouAEIOU]/', $string);
+
+echo "Total de vocales: $totalVocales";
+echo preg_replace('/[aeiouAEIOU]/', '*', $string);
+// Output: C**nt*s v*c*l*s h*y **q*i?
+```
+
+```php Using foreach Loop
+$string = "Cuantas vocales hay aqui?";
+$aux = str_split($string);
+$vocales = ['a', 'e', 'i', 'o', 'u'];
+$contarVocal = 0;
+
+foreach ($aux as $letra) {
+    if (in_array(strtolower($letra), $vocales)) {
+        $contarVocal++;
+    }
+}
+
+echo "Total de vocales: $contarVocal";
+```
+</CodeGroup>
+
+<Accordion title="Which Approach is Better?">
+  **Regular Expression**: More concise and efficient for simple pattern matching.
+  
+  **foreach Loop**: More explicit and easier to modify if you need custom logic for each character.
+  
+  Choose based on your needs and code readability preferences.
+</Accordion>
+
+## Exercise 15: Asterisk Pattern
+
+Generate a right-angled triangle pattern using nested loops.
+
+```php
+$rows = 7;
+
+// Right-angled triangle (increasing from left)
+for ($i = 1; $i <= $rows; $i++) {
+    for ($j = 1; $j <= $i; $j++) {
+        echo "*";
+    }
+    echo "<br>";
+}
+```
+
+**Output:**
+```
+*
+**
+***
+****
+*****
+******
+*******
+```
+
+<Tip>
+  Nested loops are powerful for creating 2D patterns. The outer loop controls rows, the inner loop controls columns.
+</Tip>
+
+## Exercise 16-17: Mathematical Calculations
+
+### Temperature Conversion
+
+Convert Celsius to Fahrenheit.
+
+```php
+function convertFahrenheit($gradosCelsius) {
+    return ($gradosCelsius * 9 / 5) + 32;
+}
+
+echo "19°C = " . convertFahrenheit(19) . "°F"; // 66.2°F
+echo "32°C = " . convertFahrenheit(32) . "°F"; // 89.6°F
+```
+
+### Triangle Area
+
+Calculate the area of a triangle.
+
+```php
+function calcArea($base, $altura) {
+    return ($base * $altura) / 2;
+}
+
+echo "Base: 5, Height: 13 = " . calcArea(5, 13); // 32.5
+```
+
+## Exercise 18: Shopping Cart Total
+
+Calculate total cost using a loop through an associative array.
+
+```php
+$DB_TEST = array(
+    "120" => 2,    // price => quantity
+    "60" => 3,
+    "5" => 4,
+    "0.40" => 8,
+    "1.5" => 6
+);
+
+$total = 0;
+
+foreach ($DB_TEST as $precio => $cantidad) {
+    echo "Price = $precio - Quantity: $cantidad => " . (float)$precio * $cantidad;
+    $total += (float)$precio * $cantidad;
+}
+
+echo "Total to pay: $total";
+```
+
+## Exercise 21: Divisibility Check
+
+Check if numbers are divisible by 3.
+
+```php
+function verificarDivisibleTres($x) {
+    if ($x % 3 == 0) {
+        echo "$x es divisible entre 3";
+    } else {
+        echo "$x no es divisible entre 3";
+    }
+}
+
+verificarDivisibleTres(3);   // Divisible
+verificarDivisibleTres(12);  // Divisible
+verificarDivisibleTres(13);  // Not divisible
+verificarDivisibleTres(114); // Divisible
+```
+
+## Exercise 22: String Search
+
+Check if a string contains a specific word.
+
+```php
+$str = "Esta es mi cadena de texto basica donde verificamos si la palabra PHP existe";
+
+$verificar = "/PHP/i"; // 'i' flag for case-insensitive
+
+if (preg_match($verificar, $str)) {
+    echo "La palabra PHP fue encontrada en el texto";
+} else {
+    echo "La palabra PHP no está en el texto";
+}
+```
+
+<Note>
+  The `/i` flag in the regex pattern makes the search case-insensitive, so it will match "PHP", "php", "Php", etc.
+</Note>
+
+## Exercise 23: Range Validation
+
+Determine if a number is within a specific range.
+
+```php
+$test = 25;
+
+if ($test >= 1 && $test <= 50) {
+    echo "$test está dentro del rango 1-50";
+} else {
+    echo "$test está fuera del rango 1-50";
+}
+```
+
+## Exercise 24: Prime Number Checker
+
+Verify if a number is prime using a loop.
+
+```php
+function verificarPrimo($num) {
+    if (!is_numeric($num) || $num < 2) {
+        return false;
+    }
+    
+    for ($i = 2; $i < $num; $i++) {
+        if ($num % $i == 0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+for ($i = 1; $i <= 13; $i++) {
+    if (verificarPrimo($i)) {
+        echo "$i es un numero primo";
+    } else {
+        echo "$i NO es un numero primo";
+    }
+}
+```
+
+<Accordion title="Prime Number Logic">
+  A prime number is only divisible by 1 and itself. This function:
+  1. Returns false for numbers less than 2
+  2. Tests divisibility by all numbers from 2 to (n-1)
+  3. If any number divides evenly, it's not prime
+  4. If no divisors found, it's prime
+  
+  **Optimization tip**: You only need to check up to √n instead of n-1.
+</Accordion>
+
+## Exercise 25: Even/Odd Year Detection
+
+Loop through years and classify as even or odd.
+
+```php
+function verificarAnio($year) {
+    if ($year % 2 == 0) {
+        echo "El año $year es par";
+    } else {
+        echo "El año $year es impar";
+    }
+}
+
+for ($i = 1999; $i <= 2025; $i++) {
+    verificarAnio($i);
+}
+```
+
+## Common Loop Patterns
+
+<CardGroup cols={2}>
+  <Card title="For Loop" icon="repeat">
+    Use when you know the number of iterations:
+    ```php
+    for ($i = 0; $i < 10; $i++) {
+        // code
+    }
+    ```
+  </Card>
+  
+  <Card title="Foreach Loop" icon="list">
+    Use for iterating over arrays:
+    ```php
+    foreach ($array as $item) {
+        // code
+    }
+    ```
+  </Card>
+  
+  <Card title="While Loop" icon="rotate">
+    Use when condition-based iteration:
+    ```php
+    while ($condition) {
+        // code
+    }
+    ```
+  </Card>
+  
+  <Card title="Do-While Loop" icon="arrow-rotate-right">
+    Executes at least once:
+    ```php
+    do {
+        // code
+    } while ($condition);
+    ```
+  </Card>
+</CardGroup>
+
+## Loop Control Keywords
+
+- **break**: Exit the loop immediately
+- **continue**: Skip current iteration and continue with next
+- **return**: Exit function (and loop) immediately
+
+```php
+for ($i = 1; $i <= 10; $i++) {
+    if ($i == 5) {
+        continue; // Skip 5
+    }
+    if ($i == 8) {
+        break; // Stop at 8
+    }
+    echo $i . " ";
+}
+// Output: 1 2 3 4 6 7
+```
+
+## Practice Tips
+
+<Tip>
+  - Always ensure your loop has a proper exit condition to avoid infinite loops
+  - Use descriptive loop variable names (not just `$i`)
+  - Consider loop efficiency - avoid unnecessary iterations
+  - Nested loops can quickly become slow - use them judiciously
+</Tip>
+
+## Next Steps
+
+Ready to work with data structures? Continue to:
+- [Arrays](/exercises/basic/arrays) - Master array manipulation and operations

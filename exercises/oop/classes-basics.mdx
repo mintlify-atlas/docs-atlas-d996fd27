@@ -1,0 +1,269 @@
+---
+title: 'PHP Class Basics'
+description: 'Understanding PHP classes, properties, methods, and constructors'
+---
+
+## What is a Class?
+
+A **class** is a blueprint for creating objects. It defines the structure (properties) and behavior (methods) that objects of that class will have.
+
+<Note>
+  Think of a class as a template: the `Cliente` class defines what information every client object will store (name, ID, accounts) and what actions they can perform.
+</Note>
+
+## Class Structure
+
+Every PHP class follows this basic structure:
+
+```php
+class ClassName {
+    // Properties (data)
+    private $property;
+    
+    // Constructor (initialization)
+    public function __construct($parameter) {
+        $this->property = $parameter;
+    }
+    
+    // Methods (behavior)
+    public function methodName() {
+        // Method code
+    }
+}
+```
+
+## Properties
+
+Properties are variables that belong to a class. They store the object's state and data.
+
+### Visibility Modifiers
+
+- **private**: Only accessible within the class itself
+- **public**: Accessible from anywhere
+- **protected**: Accessible within the class and subclasses
+
+### Example: Cliente Class Properties
+
+From `cliente.class.php:4-8`:
+
+```php
+class Cliente
+{
+    private $nombre;
+    private $apellido;
+    private $cedula;
+    private $cuentas;
+}
+```
+
+<Note>
+  Private properties enforce **encapsulation** - data is hidden and can only be accessed through public methods (getters/setters).
+</Note>
+
+## Constructors
+
+The `__construct()` method is automatically called when creating a new object. It initializes the object's properties.
+
+### Example: Cliente Constructor
+
+From `cliente.class.php:10-16`:
+
+```php
+public function __construct($nombre, $apellido, $cedula, $cuentas = [])
+{
+    $this->nombre = $nombre;
+    $this->apellido = $apellido;
+    $this->cedula = $cedula;
+    $this->cuentas = $cuentas;
+}
+```
+
+<ParamField path="nombre" type="string" required>
+  Client's first name
+</ParamField>
+
+<ParamField path="apellido" type="string" required>
+  Client's last name
+</ParamField>
+
+<ParamField path="cedula" type="string" required>
+  Client's ID number (cedula)
+</ParamField>
+
+<ParamField path="cuentas" type="array" default="[]">
+  Array of CuentaBanco objects owned by the client
+</ParamField>
+
+### Using the Constructor
+
+```php
+// Create a new client
+$cliente = new Cliente('María', 'García', '87654321');
+
+// Create client with existing accounts
+$cliente = new Cliente('Juan', 'Pérez', '12345678', [$cuenta1, $cuenta2]);
+```
+
+## Methods
+
+Methods define what actions an object can perform. They are functions that belong to a class.
+
+### Getter Methods
+
+Getters return the value of private properties:
+
+```php
+public function getNombre()
+{
+    return $this->nombre;
+}
+
+public function getCedula()
+{
+    return $this->cedula;
+}
+
+public function getCuentas()
+{
+    return $this->cuentas;
+}
+```
+
+### Setter Methods
+
+Setters modify the value of private properties:
+
+```php
+public function setNombre($nombre)
+{
+    $this->nombre = $nombre;
+}
+
+public function setCuenta($cuenta)
+{
+    $this->cuentas[] = $cuenta;
+}
+```
+
+<Note>
+  The `setCuenta()` method adds a new account to the client's account array, allowing one client to have multiple bank accounts.
+</Note>
+
+## The $this Keyword
+
+The `$this` keyword refers to the current object instance. Use it to access properties and methods within the class:
+
+```php
+$this->property    // Access a property
+$this->method()    // Call a method
+```
+
+## Complete Example: Transaccion Class
+
+From `Transaccion.class.php`:
+
+```php
+class Transaccion
+{
+    private $tipo;
+    private $monto;
+    private $fecha;
+
+    public function __construct($tipo, $monto, $fecha)
+    {
+        $this->tipo = $tipo;
+        $this->monto = $monto;
+        $this->fecha = $fecha;
+    }
+
+    public function getTipo()
+    {
+        return $this->tipo;
+    }
+
+    public function getMonto()
+    {
+        return $this->monto;
+    }
+
+    public function getFecha()
+    {
+        return $this->fecha;
+    }
+}
+```
+
+### Using the Transaccion Class
+
+```php
+// Create a new transaction
+$transaccion = new Transaccion('depósito', 500, '2026-03-05 14:30:00');
+
+// Access transaction details
+echo $transaccion->getTipo();   // 'depósito'
+echo $transaccion->getMonto();  // 500
+echo $transaccion->getFecha();  // '2026-03-05 14:30:00'
+```
+
+## Key Concepts Summary
+
+<CardGroup cols={2}>
+  <Card title="Properties" icon="database">
+    Variables that store object data. Use `private` for encapsulation.
+  </Card>
+  
+  <Card title="Constructor" icon="play">
+    Special method that initializes objects when they're created.
+  </Card>
+  
+  <Card title="Getters" icon="arrow-right-from-bracket">
+    Public methods that return private property values.
+  </Card>
+  
+  <Card title="Setters" icon="arrow-right-to-bracket">
+    Public methods that modify private property values.
+  </Card>
+</CardGroup>
+
+## Practice Exercise
+
+Try creating your own class:
+
+```php
+class Producto
+{
+    private $nombre;
+    private $precio;
+    private $stock;
+
+    public function __construct($nombre, $precio, $stock = 0)
+    {
+        $this->nombre = $nombre;
+        $this->precio = $precio;
+        $this->stock = $stock;
+    }
+
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    public function getPrecio()
+    {
+        return $this->precio;
+    }
+
+    public function vender($cantidad)
+    {
+        if ($cantidad <= $this->stock) {
+            $this->stock -= $cantidad;
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+<Note>
+  Next, explore the **Banking System** page to see how multiple classes work together in a real application.
+</Note>

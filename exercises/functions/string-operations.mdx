@@ -1,0 +1,352 @@
+---
+title: 'String Operations & Patterns'
+description: 'Master string manipulation, conditional logic, and pattern matching in PHP functions'
+---
+
+## String Formatting and Conditional Output
+
+While these exercises focus on numeric operations, they demonstrate important string formatting concepts that apply broadly to PHP programming.
+
+## Exercise 1: Leap Year Detection
+
+This function determines if a given year is a leap year using the standard Gregorian calendar rules.
+
+### Implementation
+
+```php funcion-10.php
+function func10($test)
+{
+    if ($test % 4 == 0 && $test % 100 != 0 || $test % 400 == 0) {
+        echo "$test is a leap year\n";
+    } else {
+        echo "$test is NOT a leap year\n";
+    }
+}
+```
+
+### Usage Examples
+
+```php
+func10(2024);  // is a leap year
+func10(2100);  // is NOT a leap year
+func10(2000);  // is a leap year
+func10(2023);  // is NOT a leap year
+```
+
+### Leap Year Rules
+
+<Note>
+A year is a leap year if:
+1. It is divisible by 4 **AND** not divisible by 100
+2. **OR** it is divisible by 400
+
+Examples:
+- 2024: divisible by 4, not by 100 ✓ **leap year**
+- 2100: divisible by 4 and 100, not by 400 ✗ **not a leap year**
+- 2000: divisible by 400 ✓ **leap year**
+</Note>
+
+<Tabs>
+  <Tab title="Logic Breakdown">
+    ```php
+    // Rule 1: Divisible by 4 but not by 100
+    $test % 4 == 0 && $test % 100 != 0
+    
+    // Rule 2: Divisible by 400
+    $test % 400 == 0
+    
+    // Combined with OR
+    if ($test % 4 == 0 && $test % 100 != 0 || $test % 400 == 0)
+    ```
+  </Tab>
+  
+  <Tab title="Operator Precedence">
+    Operator precedence determines evaluation order:
+    
+    1. `%` (modulo) - highest
+    2. `==`, `!=` (comparison)
+    3. `&&` (logical AND)
+    4. `||` (logical OR) - lowest
+    
+    So the expression evaluates as:
+    ```php
+    (($test % 4 == 0) && ($test % 100 != 0)) || ($test % 400 == 0)
+    ```
+  </Tab>
+  
+  <Tab title="Test Cases">
+    | Year | ÷4 | ÷100 | ÷400 | Leap? |
+    |------|-----|------|------|-------|
+    | 2024 | ✓   | ✗    | ✗    | Yes   |
+    | 2100 | ✓   | ✓    | ✗    | No    |
+    | 2000 | ✓   | ✓    | ✓    | Yes   |
+    | 2023 | ✗   | ✗    | ✗    | No    |
+  </Tab>
+</Tabs>
+
+## Exercise 2: FizzBuzz Pattern
+
+This function demonstrates conditional string replacement based on divisibility rules (modified from the original multiples exercise).
+
+### Implementation
+
+```php funcion-06.php
+function func6()
+{
+    for ($i = 1; $i <= 300; $i++) {
+        if ($i % 2 == 0 && $i % 5 == 0) {
+            echo "$i ==> Multiple of 2 AND 5\n";
+        } elseif ($i % 2 == 0) {
+            echo "$i ==> Multiple of 2\n";
+        } elseif ($i % 5 == 0) {
+            echo "$i ==> Multiple of 5\n";
+        } else {
+            echo "$i\n";
+        }
+    }
+}
+```
+
+<Note>
+**FizzBuzz Pattern**
+
+This is a classic programming pattern where numbers are replaced with words based on conditions. The original FizzBuzz uses 3 and 5:
+- Multiples of 3: "Fizz"
+- Multiples of 5: "Buzz"
+- Multiples of both: "FizzBuzz"
+</Note>
+
+### String Interpolation
+
+<CodeGroup>
+
+```php Double Quotes
+// Variables are expanded inside double quotes
+echo "$i ==> Multiple of 2\n";
+// Output: 10 ==> Multiple of 2
+```
+
+```php Single Quotes
+// Variables are NOT expanded inside single quotes
+echo '$i ==> Multiple of 2\n';
+// Output: $i ==> Multiple of 2\n (literal)
+```
+
+```php Concatenation
+// Using the dot operator
+echo $i . " ==> Multiple of 2\n";
+// Output: 10 ==> Multiple of 2
+```
+
+```php Complex Expressions
+// Use curly braces for complex expressions
+echo "Result: {$array['key']} items\n";
+echo "Value: {$obj->property}\n";
+```
+
+</CodeGroup>
+
+## Exercise 3: Break Statement with Messages
+
+This function demonstrates how to output informative messages when stopping execution.
+
+### Implementation
+
+```php funcion-08.php
+function func8()
+{
+    for ($i = 1; $i <= 30; $i++) {
+        if ($i % 7 == 0){
+            echo "Cycle stopped with break: found $i, which is a multiple of 7\n";
+            break;
+        }
+        echo "$i\n";
+    }
+}
+```
+
+### Output
+
+```
+1
+2
+3
+4
+5
+6
+Cycle stopped with break: found 7, which is a multiple of 7
+```
+
+<Note>
+Using descriptive messages when stopping execution helps with debugging and makes your code's behavior more transparent.
+</Note>
+
+## Exercise 4: Formatted Output with Tabs
+
+This function demonstrates using tabs for aligned output.
+
+### Implementation
+
+```php funcion-09.php
+function func9(){
+    for($i = 1; $i<=200; $i++){
+        if($i%4==0 || $i%7==0 || $i%8==0){
+            continue;
+        }
+        echo "$i\t";  // Tab character for spacing
+    }
+}
+```
+
+### Output Example
+
+```
+1    2    3    5    6    9    10    11    13    15    17    18    19    ...
+```
+
+### Escape Sequences
+
+<Tabs>
+  <Tab title="Common Escapes">
+    | Sequence | Meaning | Example |
+    |----------|---------|----------|
+    | `\n` | Newline | `echo "Line 1\nLine 2";` |
+    | `\t` | Tab | `echo "Col1\tCol2";` |
+    | `\r` | Carriage return | `echo "Text\r";` |
+    | `\\` | Backslash | `echo "Path: C:\\Users";` |
+    | `\"` | Double quote | `echo "Say \"Hi\"";` |
+  </Tab>
+  
+  <Tab title="Tab Alignment">
+    Tabs are useful for column alignment:
+    
+    ```php
+    echo "Name\tAge\tCity\n";
+    echo "John\t25\tNYC\n";
+    echo "Jane\t30\tLA\n";
+    ```
+    
+    Output:
+    ```
+    Name    Age    City
+    John    25     NYC
+    Jane    30     LA
+    ```
+  </Tab>
+  
+  <Tab title="HTML Context">
+    In HTML output, use `<br>` instead of `\n`:
+    
+    ```php
+    echo "Line 1<br>";
+    echo "Line 2<br>";
+    ```
+    
+    For tabs in HTML, use CSS or `&nbsp;` entities.
+  </Tab>
+</Tabs>
+
+## String Formatting Functions
+
+<CodeGroup>
+
+```php sprintf
+// Format strings with placeholders
+$name = "Alice";
+$age = 30;
+$message = sprintf("%s is %d years old", $name, $age);
+echo $message;  // Alice is 30 years old
+```
+
+```php printf
+// Print formatted string directly
+$price = 19.99;
+printf("Price: $%.2f\n", $price);
+// Output: Price: $19.99
+```
+
+```php number_format
+// Format numbers with thousands separator
+$num = 1234567.89;
+echo number_format($num, 2);  // 1,234,567.89
+```
+
+```php str_pad
+// Pad string to certain length
+$num = 5;
+echo str_pad($num, 3, '0', STR_PAD_LEFT);  // 005
+```
+
+</CodeGroup>
+
+## Conditional Output Patterns
+
+### Ternary Operator
+
+```php
+// Shorthand for if-else
+$result = $i % 2 == 0 ? "even" : "odd";
+echo "$i is $result\n";
+
+// Can be nested (but use sparingly)
+$type = $i % 15 == 0 ? "fizzbuzz" : 
+        ($i % 3 == 0 ? "fizz" : 
+        ($i % 5 == 0 ? "buzz" : $i));
+```
+
+### Match Expression (PHP 8.0+)
+
+```php
+$message = match(true) {
+    $i % 15 == 0 => "FizzBuzz",
+    $i % 3 == 0 => "Fizz",
+    $i % 5 == 0 => "Buzz",
+    default => (string) $i
+};
+echo $message;
+```
+
+## Key Concepts
+
+<CardGroup cols={2}>
+  <Card title="String Interpolation" icon="dollar-sign">
+    Use double quotes to embed variables: `"Value: $var"` expands variables automatically.
+  </Card>
+  
+  <Card title="Escape Sequences" icon="backslash">
+    Special characters like `\n` (newline) and `\t` (tab) format output effectively.
+  </Card>
+  
+  <Card title="Conditional Output" icon="code-branch">
+    Use if-else chains or ternary operators to control what strings are printed.
+  </Card>
+  
+  <Card title="String Formatting" icon="text-width">
+    Functions like `sprintf()` and `number_format()` provide precise control over output.
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+1. **Use double quotes** for strings containing variables or escape sequences
+2. **Use single quotes** for literal strings (slightly faster)
+3. **Prefer concatenation** (`.`) for complex expressions
+4. **Format numbers** appropriately for display
+5. **Provide clear messages** when stopping execution
+6. **Consider context**: HTML vs plain text output
+
+<Note>
+**Performance Tip**: Single quotes are marginally faster than double quotes since PHP doesn't need to parse them for variables. However, the difference is negligible in most applications.
+</Note>
+
+---
+
+**Congratulations!** You've completed the Functions exercises. You've learned:
+
+- Prime number detection and optimization
+- Array building and manipulation
+- String formatting and conditional output
+- Loop control with break and continue
+- Data analysis and accumulation patterns
+
+Return to [Functions Overview](/exercises/functions/overview) to review all topics.

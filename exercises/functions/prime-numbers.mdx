@@ -1,0 +1,262 @@
+---
+title: 'Prime Numbers & Classification'
+description: 'Learn to identify prime numbers, classify numbers, and implement number theory algorithms in PHP'
+---
+
+## Prime Number Detection
+
+Prime numbers are natural numbers greater than 1 that have no positive divisors other than 1 and themselves. These exercises demonstrate how to identify primes and classify numbers using PHP functions.
+
+## Exercise 1: Number Classification (0-99)
+
+This function analyzes the first 100 natural numbers and classifies them as prime, non-prime, even, or odd.
+
+### Implementation
+
+```php funcion-01.php
+function func1()
+{
+    $esPrimo = true;
+    $contarPrimos = 0;
+    $contarNoPrimos = 0;
+    $contarPares = 0;
+    $contarImpares = 0;
+
+    for ($i = 0; $i < 100; $i++) {
+        // Count even numbers
+        if ($i % 2 == 0) {
+            $contarPares++;
+        }
+
+        // Count odd numbers
+        if ($i % 2 == 1) {
+            $contarImpares++;
+        }
+
+        // Check if number is prime
+        if (!is_numeric($i) || $i < 2) {
+            $esPrimo = false;
+        }
+
+        for ($j = 2; $j < $i; $j++) {
+            if ($i % $j == 0) {
+                $esPrimo = false;
+            }
+        }
+
+        if ($esPrimo) {
+            $contarPrimos++;
+        } else {
+            $contarNoPrimos++;
+        }
+
+        $esPrimo = true;
+    }
+
+    $cuentas = array(
+        "PRIMOS" => $contarPrimos,
+        "NO PRIMOS" => $contarNoPrimos,
+        "PARES" => $contarPares,
+        "NO PARES" => $contarImpares
+    );
+
+    return $cuentas;
+}
+```
+
+### Usage Example
+
+```php
+foreach (func1() as $key => $value) {
+    echo "$key = $value\n";
+}
+```
+
+### Output
+
+```
+PRIMOS = 25
+NO PRIMOS = 75
+PARES = 50
+NO PARES = 50
+```
+
+<Note>
+This algorithm checks each number from 0 to 99 by testing divisibility. Numbers less than 2 are automatically non-prime. The function returns an associative array with counts for each category.
+</Note>
+
+## Exercise 2: Optimized Prime Detection
+
+This function prints numbers from 1 to 100, excluding even numbers and primes. It uses an optimized prime checking algorithm.
+
+### Implementation
+
+```php funcion-03.php
+function func3()
+{
+    $i = 1;
+
+    while ($i <= 100) {
+        $esPrimo = true;
+        
+        if ($i < 2) $esPrimo = false;
+        
+        // Only check up to square root for efficiency
+        for ($j = 2; $j <= sqrt($i); $j++) {
+            if ($i % $j == 0) {
+                $esPrimo = false;
+                break;
+            }
+        }
+        
+        // Skip if prime or even
+        if ($esPrimo || $i%2==0) {
+            $i++;
+            continue;
+        }
+        
+        echo "$i, ";
+        $i++;
+    }
+}
+```
+
+### Key Optimization
+
+<Tabs>
+  <Tab title="Square Root Method">
+    Instead of checking divisibility up to `$i-1`, we only check up to `sqrt($i)`. This dramatically improves performance:
+    
+    ```php
+    for ($j = 2; $j <= sqrt($i); $j++) {
+        if ($i % $j == 0) {
+            $esPrimo = false;
+            break;
+        }
+    }
+    ```
+    
+    **Why?** If a number has a divisor greater than its square root, it must also have a corresponding divisor less than its square root.
+  </Tab>
+  
+  <Tab title="Break Statement">
+    The `break` statement exits the loop immediately when we find a divisor:
+    
+    ```php
+    if ($i % $j == 0) {
+        $esPrimo = false;
+        break; // No need to check further
+    }
+    ```
+    
+    This saves computation time by not testing all possible divisors once we know the number isn't prime.
+  </Tab>
+  
+  <Tab title="Continue Statement">
+    The `continue` statement skips to the next iteration, excluding primes and even numbers:
+    
+    ```php
+    if ($esPrimo || $i%2==0) {
+        $i++;
+        continue; // Skip to next number
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Exercise 3: Multiples Detection
+
+This function finds numbers whose squares are multiples of 5, 8, AND 9 simultaneously.
+
+### Implementation
+
+```php funcion-02.php
+function func2()
+{
+    for ($i = 1; $i <= 1000; $i++) {
+        if (($i * $i) % 5 == 0 && ($i * $i) % 8 == 0 && ($i * $i) % 9 == 0) {
+            echo "$i x $i = " . $i * $i . " (multiple of: 5, 8, 9)\n";
+        }
+    }
+}
+```
+
+<Note>
+For a number's square to be divisible by 5, 8, and 9, the number itself must be divisible by the least common multiple (LCM) of their square roots. This demonstrates the relationship between multiples and squares.
+</Note>
+
+## Exercise 4: Loop Control with Break
+
+This function demonstrates how to stop execution when finding a multiple of 7.
+
+### Implementation
+
+```php funcion-08.php
+function func8()
+{
+    for ($i = 1; $i <= 30; $i++) {
+        if ($i % 7 == 0){
+            echo "Stopping: $i is a multiple of 7\n";
+            break;
+        }
+        echo "$i\n";
+    }
+}
+```
+
+### Output
+
+```
+1
+2
+3
+4
+5
+6
+Stopping: 7 is a multiple of 7
+```
+
+## Exercise 5: Filtering Multiples
+
+This function prints numbers from 1 to 200 while skipping multiples of 4, 7, and 8.
+
+### Implementation
+
+```php funcion-09.php
+function func9(){
+    for($i = 1; $i<=200; $i++){
+        if($i%4==0 || $i%7==0 || $i%8==0){
+            continue; // Skip this iteration
+        }
+        echo "$i\t";
+    }
+}
+```
+
+<Note>
+The `continue` statement skips the remaining code in the current iteration and moves to the next one. This is useful for filtering values in loops.
+</Note>
+
+## Key Takeaways
+
+<CardGroup cols={2}>
+  <Card title="Prime Detection" icon="magnifying-glass">
+    Use the square root optimization to efficiently check if a number is prime. Only test divisors up to √n.
+  </Card>
+  
+  <Card title="Loop Control" icon="arrows-rotate">
+    Master `break` (exit loop) and `continue` (skip iteration) to control loop execution flow effectively.
+  </Card>
+  
+  <Card title="Modulo Operator" icon="percent">
+    The `%` operator is essential for checking divisibility: `$n % $d == 0` means n is divisible by d.
+  </Card>
+  
+  <Card title="Algorithm Efficiency" icon="gauge-high">
+    Small optimizations like checking up to √n instead of n can dramatically improve performance.
+  </Card>
+</CardGroup>
+
+---
+
+**Next:** Continue to [Arrays Manipulation](/exercises/functions/arrays-manipulation) to learn about working with collections of data.

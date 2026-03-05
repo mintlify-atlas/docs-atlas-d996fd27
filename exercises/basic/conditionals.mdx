@@ -1,0 +1,273 @@
+---
+title: "Conditional Exercises"
+description: "Master if/else statements and conditional logic in PHP"
+---
+
+# Conditional Logic Exercises
+
+This section covers exercises 1-10, focusing on conditional statements, comparison operators, and decision-making patterns in PHP.
+
+## Exercise 1: Verify Positive Numbers
+
+Check if a number is positive, negative, or zero.
+
+```php
+$test = 0;
+
+if ($test > 0) {
+    echo $test . ' es positivo';
+} elseif ($test == 0) {
+    echo $test . ' El cero se considera un número neutro, ni positivo ni negativo';
+} else {
+    echo $test . ' no es positivo';
+}
+```
+
+<Accordion title="Key Concepts">
+  - Using `if`, `elseif`, and `else` statements
+  - Comparison operators: `>`, `==`
+  - Handling edge cases (zero)
+</Accordion>
+
+## Exercise 2: Age Verification
+
+Determine if a person is of legal age (18 years or older).
+
+```php
+$edad = 123;
+
+if ($edad >= 18 && $edad <= 122) {
+    echo 'Esta persona es mayor de edad';
+} elseif ($edad > 122) {
+    echo 'Esto es sumamente sospechoso, el récord de longevidad humana '
+       . 'oficialmente reconocido es de 122 años y 164 días';
+} elseif ($edad < 1) {
+    echo 'Esta persona parece haber nacido hace poco';
+} else {
+    echo 'Esta persona no es mayor de edad';
+}
+```
+
+<Note>
+  This exercise demonstrates using logical operators (`&&`) and handling multiple edge cases including realistic data validation.
+</Note>
+
+## Exercise 3: Even Number Detection
+
+Create a function to determine if a number is even.
+
+```php
+function EsPar($numero) {
+    if ($numero % 2 == 0) {
+        echo $numero . ' Es un numero par';
+    } else {
+        echo $numero . ' No es un numero par';
+    }
+}
+
+EsPar(5);  // Not even
+EsPar(2);  // Even
+EsPar(42); // Even
+```
+
+<Accordion title="Understanding the Modulo Operator">
+  The modulo operator `%` returns the remainder of a division. When `$numero % 2 == 0`, the number is divisible by 2 with no remainder, making it even.
+</Accordion>
+
+## Exercise 4: Leap Year Checker
+
+Verify if a year is a leap year.
+
+```php
+function EsBisiesto($test) {
+    if ($test % 4 == 0 && $test % 100 != 0 || $test % 400 == 0) {
+        echo $test . ' Es un anio bisiesto';
+    } else {
+        echo $test . ' No es un anio bisiesto';
+    }
+}
+
+EsBisiesto(2024); // Leap year
+EsBisiesto(2025); // Not a leap year
+```
+
+<Tabs>
+  <Tab title="Leap Year Rules">
+    A year is a leap year if:
+    1. It's divisible by 4 AND not divisible by 100, OR
+    2. It's divisible by 400
+  </Tab>
+  <Tab title="Examples">
+    - 2000: Leap year (divisible by 400)
+    - 1900: Not a leap year (divisible by 100 but not by 400)
+    - 2024: Leap year (divisible by 4, not by 100)
+  </Tab>
+</Tabs>
+
+## Exercise 5: Password Validation
+
+Check if a password has at least 8 characters (and no more than 15).
+
+<CodeGroup>
+```php Using strlen()
+function validPass($pass) {
+    if (strlen($pass) >= 8 && strlen($pass) <= 15) {
+        echo $pass . ' Es una contrasena valida';
+    } else {
+        echo $pass . ' NO es una contrasena valida';
+    }
+}
+
+validPass('3sVal1d4*01*'); // Valid
+validPass('N0v4Lid');      // Invalid (too short)
+```
+
+```php Using Regular Expression
+function validPassRegEx($pass) {
+    $pattern = '/^.{8,15}$/';
+    
+    if (preg_match($pattern, $pass)) {
+        echo $pass . ' Es una contrasena valida';
+    } else {
+        echo $pass . ' NO es una contrasena valida';
+    }
+}
+
+validPassRegEx('3sVal1d4*01*'); // Valid
+validPassRegEx('N0v4Lid');      // Invalid
+```
+</CodeGroup>
+
+<Note>
+  Both approaches work, but `strlen()` is simpler for basic length validation. Regular expressions become more useful when you need to validate complex password requirements (uppercase, numbers, special characters, etc.).
+</Note>
+
+## Exercise 6: Maximum of Three Numbers
+
+Compare three numbers and identify the largest.
+
+```php
+$n1 = 13;
+$n2 = 5;
+$n3 = -1;
+
+echo 'El numero mas alto entre (' . $n1 . ', ' . $n2 . ', ' . $n3 . ') es ' 
+   . max($n1, $n2, $n3);
+```
+
+<Accordion title="Alternative Approaches">
+  While PHP's built-in `max()` function is the most efficient solution, you could also solve this with nested if/elseif statements:
+  
+  ```php
+  if ($n1 >= $n2 && $n1 >= $n3) {
+      echo "Largest: $n1";
+  } elseif ($n2 >= $n1 && $n2 >= $n3) {
+      echo "Largest: $n2";
+  } else {
+      echo "Largest: $n3";
+  }
+  ```
+  
+  However, using `max()` saves time and reduces code complexity.
+</Accordion>
+
+## Exercise 7: Grade Classification
+
+Classify school grades as passing or failing.
+
+```php
+$calificaciones = [10, 14, 20, 18, 6, 11, 9, 1, 4, 17];
+
+foreach ($calificaciones as $nota) {
+    if ($nota >= 10) {
+        echo $nota . ' = APROBADO!';
+    } else {
+        echo $nota . ' = Reprobado...';
+    }
+}
+```
+
+## Exercise 9: User Authentication
+
+Verify if a user can access a system by checking credentials.
+
+```php
+$usersPasswords = array(
+    "victor" => "v123",
+    "Lsimp" => "L123",
+    "admin" => "admin"
+);
+
+function validateUser($username, $password, $DB_TEST) {
+    $validationToken = false;
+    
+    foreach ($DB_TEST as $user => $pass) {
+        if ($username == $user && $password == $pass) {
+            $validationToken = true;
+            break;
+        }
+    }
+    
+    return $validationToken;
+}
+
+// Test the function
+echo validateUser('admin', 'admin', $usersPasswords) ? 'true' : 'false'; // true
+echo validateUser('admin', '123', $usersPasswords) ? 'true' : 'false';   // false
+```
+
+<Warning>
+  This is a basic authentication example for learning purposes. Real-world applications should use secure password hashing (e.g., `password_hash()` and `password_verify()`) and never store passwords in plain text.
+</Warning>
+
+## Exercise 10: Multiple Detection
+
+Determine if a number is a multiple of another.
+
+```php
+function multiplo($n1, $n2) {
+    if ($n1 % $n2 == 0) {
+        echo "$n1 es multiplo de $n2";
+    } else {
+        echo "$n1 no es multiplo de $n2";
+    }
+}
+
+multiplo(15, 5); // 15 is multiple of 5
+multiplo(50, 3); // 50 is not multiple of 3
+multiplo(25, 5); // 25 is multiple of 5
+```
+
+## Key Takeaways
+
+<CardGroup cols={2}>
+  <Card title="Comparison Operators" icon="equals">
+    - `==` equal to
+    - `!=` not equal to
+    - `>` greater than
+    - `<` less than
+    - `>=` greater than or equal
+    - `<=` less than or equal
+  </Card>
+  
+  <Card title="Logical Operators" icon="code-branch">
+    - `&&` (AND) - both conditions must be true
+    - `||` (OR) - at least one condition must be true
+    - `!` (NOT) - negates a condition
+  </Card>
+</CardGroup>
+
+## Practice Tips
+
+<Tip>
+  - Always consider edge cases (zero, negative numbers, empty strings)
+  - Use meaningful variable names that describe what you're checking
+  - Break complex conditions into separate if statements when they become hard to read
+  - Test your conditionals with multiple inputs to verify all branches work correctly
+</Tip>
+
+## Next Steps
+
+Once you're comfortable with conditionals, move on to:
+- [Loops](/exercises/basic/loops) - Learn iteration and repetition
+- [Arrays](/exercises/basic/arrays) - Work with collections of data

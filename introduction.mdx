@@ -1,0 +1,258 @@
+---
+title: Introduction
+description: Welcome to the PHP Programming 2 exercises collection - a comprehensive set of practical exercises for learning PHP fundamentals, functions, OOP, and database operations.
+---
+
+## Overview
+
+This exercise collection is designed for **Programming 2** students to build practical PHP development skills through hands-on coding exercises. The project provides a progressive learning path from basic syntax to full CRUD applications with MySQL databases.
+
+<Note>
+All exercises are self-contained and can be run individually or as part of the complete project structure.
+</Note>
+
+## What You'll Learn
+
+This collection covers four main areas of PHP development:
+
+<CardGroup cols={2}>
+  <Card title="Basic Exercises" icon="code" href="#basic-exercises">
+    Master PHP fundamentals with 35 progressive exercises covering variables, conditionals, loops, and basic algorithms.
+  </Card>
+  
+  <Card title="Functions" icon="function" href="#functions">
+    Learn to write reusable code with 10 function exercises including prime number detection, array operations, and more.
+  </Card>
+  
+  <Card title="Object-Oriented Programming" icon="cube" href="#oop">
+    Build a complete banking system with classes for accounts, transactions, customers, and ATM operations.
+  </Card>
+  
+  <Card title="CRUD Operations" icon="database" href="#crud">
+    Implement a full user management system with Create, Read, Update, and Delete operations using MySQL.
+  </Card>
+</CardGroup>
+
+## Topics Covered
+
+### Basic Exercises
+
+The `35-ejercicios-basicos` folder contains foundational exercises that cover:
+
+- Variables and data types
+- Conditional statements (`if`, `else`, `elseif`)
+- Loops (`for`, `while`, `foreach`)
+- Arrays and array manipulation
+- String operations
+- Mathematical operations and algorithms
+
+**Example from ejercicio-01-08.php:**
+
+```php
+$test = 0;
+
+if ($test > 0) {
+    echo $test . ' es positivo';
+} elseif ($test == 0) {
+    echo $test . ' El cero se considera un número neutro';
+} else {
+    echo $test . ' no es positivo';
+}
+```
+
+### Functions
+
+The `ejercicios-funciones` folder includes 10 exercises focusing on:
+
+- Function declaration and parameters
+- Return values and arrays
+- Prime number detection
+- Number classification (even/odd, prime/composite)
+- Array operations and transformations
+
+**Example from funcion-01.php:**
+
+```php
+function func1() {
+    $esPrimo = true;
+    $contarPrimos = 0;
+    $contarPares = 0;
+    $contarImpares = 0;
+
+    for ($i = 0; $i < 100; $i++) {
+        // Prime number detection logic
+        for ($j = 2; $j < $i; $j++) {
+            if ($i % $j == 0) {
+                $esPrimo = false;
+            }
+        }
+        
+        if ($esPrimo) {
+            $contarPrimos++;
+        }
+        $esPrimo = true;
+    }
+
+    return array(
+        "PRIMOS" => $contarPrimos,
+        "PARES" => $contarPares,
+        "NO PARES" => $contarImpares
+    );
+}
+```
+
+### Object-Oriented Programming
+
+The `POO/ejercicio-banco` folder contains a complete banking system simulation:
+
+- **CuentaBanco.class.php**: Base bank account class with deposits, withdrawals, and transactions
+- **CuentaAhorro.class.php**: Savings account with interest calculations
+- **CuentaCorriente.class.php**: Checking account with overdraft protection
+- **Cliente.class.php**: Customer information management
+- **Transaccion.class.php**: Transaction history tracking
+- **Cajero.class.php**: ATM operations simulation
+
+**Example from CuentaBanco.class.php:**
+
+```php
+class CuentaBanco {
+    private $numeroCuenta;
+    private $tipo;
+    private $titular;
+    private $saldo;
+    private $transacciones = [];
+
+    public function depositar($monto) {
+        $this->saldo += $monto;
+        $this->RegistrarTransaccion('depósito', $monto);
+    }
+
+    public function retirar($monto) {
+        if ($monto <= $this->saldo) {
+            $this->saldo -= $monto;
+            $this->RegistrarTransaccion('retiro', $monto);
+        } else {
+            throw new Exception("Saldo insuficiente");
+        }
+    }
+}
+```
+
+### CRUD Operations
+
+The `CRUD` folder implements a complete user management system:
+
+- **database.php**: PDO database connection with UTF-8 support
+- **orm.class.php**: Object-Relational Mapping base class
+- **usuario.class.php**: User entity class
+- **registroUsuario**: User registration (Create)
+- **listarUsuario**: User listing (Read)
+- **modificarUsuario**: User updates (Update)
+- **borrarUsuario**: User deletion (Delete)
+
+**Example ORM Implementation:**
+
+```php
+class ORM {
+    protected $id;
+    protected $table;
+    protected $db;
+
+    // Create
+    public function save($data) {
+        $columns = array_keys($data);
+        $placeholders = array_map(fn($col) => ":$col", $columns);
+        
+        $sql = "INSERT INTO {$this->table} (";
+        $sql .= implode(', ', $columns);
+        $sql .= ") VALUES (";
+        $sql .= implode(', ', $placeholders);
+        $sql .= ")";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($data);
+    }
+
+    // Read
+    public function getAll() {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table}");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // Update
+    public function updateById($id, $data) {
+        $set_clauses = [];
+        foreach (array_keys($data) as $key) {
+            $set_clauses[] = "{$key} = :{$key}";
+        }
+        
+        $sql = "UPDATE {$this->table} SET ";
+        $sql .= implode(', ', $set_clauses);
+        $sql .= " WHERE {$this->id} = :id_value";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(array_merge($data, ['id_value' => $id]));
+    }
+
+    // Delete
+    public function deleteById($id) {
+        $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE {$this->id} = :id");
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
+}
+```
+
+## Project Structure
+
+```
+scripts/
+├── 35-ejercicios-basicos/    # 35 foundational PHP exercises
+│   ├── ejercicio-01-08.php
+│   ├── ejercicio-02.php
+│   └── ...
+├── ejercicios-funciones/     # 10 function-based exercises
+│   ├── funcion-01.php
+│   ├── funcion-02.php
+│   └── ...
+├── POO/                      # Object-oriented programming
+│   └── ejercicio-banco/      # Banking system simulation
+│       ├── CuentaBanco.class.php
+│       ├── CuentaAhorro.class.php
+│       ├── Cliente.class.php
+│       └── ...
+└── CRUD/                     # Database operations
+    ├── database.php
+    ├── orm.class.php
+    ├── usuario.class.php
+    └── ...
+```
+
+## Getting Started
+
+<CardGroup cols={2}>
+  <Card title="Setup Environment" icon="gear" href="/setup">
+    Configure PHP, MySQL, and your web server to run the exercises.
+  </Card>
+  
+  <Card title="Basic Exercises" icon="play" href="/exercises/basic/overview">
+    Start with the 35 foundational exercises to master PHP basics.
+  </Card>
+  
+  <Card title="Functions Tutorial" icon="code-branch" href="/exercises/functions/overview">
+    Learn to write reusable code with function exercises.
+  </Card>
+  
+  <Card title="CRUD Application" icon="database" href="/exercises/crud/overview">
+    Build a complete user management system with MySQL.
+  </Card>
+</CardGroup>
+
+<Warning>
+Make sure to complete the [setup guide](/setup) before running any exercises, especially for the CRUD section which requires MySQL database configuration.
+</Warning>
+
+## Next Steps
+
+Ready to begin? Head over to the [Setup Guide](/setup) to configure your development environment and start coding!

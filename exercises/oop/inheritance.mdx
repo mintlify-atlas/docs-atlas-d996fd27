@@ -1,0 +1,342 @@
+---
+title: 'Inheritance in PHP'
+description: 'Learn inheritance concepts through specialized bank account types that extend the base CuentaBanco class'
+---
+
+## What is Inheritance?
+
+Inheritance allows you to create new classes based on existing classes. The new class (child/subclass) inherits all properties and methods from the parent class (base/superclass) and can:
+
+- Use inherited functionality without rewriting it
+- Add new properties and methods
+- Override parent methods with specialized behavior
+
+<Note>
+  Think of inheritance as specialization: A CuentaAhorro **is a** CuentaBanco, but with additional features specific to savings accounts.
+</Note>
+
+## Inheritance Syntax
+
+Use the `extends` keyword to create a child class:
+
+```php
+class ChildClass extends ParentClass
+{
+    // Additional properties and methods
+}
+```
+
+## CuentaAhorro: Savings Account
+
+The savings account extends CuentaBanco and adds interest calculation functionality.
+
+### Complete Implementation
+
+From `CuentaAhorro.class.php`:
+
+```php
+class CuentaAhorro extends CuentaBanco
+{
+    private $interesAnual;
+
+    public function __construct($numeroCuenta, $titular, $saldoInicial = 0, $interesAnual = 0.02)
+    {
+        parent::__construct($numeroCuenta, 'ahorro', $titular, $saldoInicial);
+        $this->interesAnual = $interesAnual;
+    }
+
+    public function calcularInteres()
+    {
+        return $this->getSaldo() * $this->interesAnual;
+    }
+
+    public function aplicarInteres()
+    {
+        $interes = $this->calcularInteres();
+        $this->depositar($interes);
+    }
+}
+```
+
+### Key Concepts
+
+#### New Property
+
+```php
+private $interesAnual;
+```
+
+CuentaAhorro adds a new property not present in the parent class.
+
+#### parent::__construct()
+
+From `CuentaAhorro.class.php:9`:
+
+```php
+parent::__construct($numeroCuenta, 'ahorro', $titular, $saldoInicial);
+```
+
+<Note>
+  The `parent::` keyword calls methods from the parent class. Here it initializes all inherited properties before adding the new interest rate property.
+</Note>
+
+<ParamField path="numeroCuenta" type="string" required>
+  Account number
+</ParamField>
+
+<ParamField path="titular" type="Cliente" required>
+  Account owner (Cliente object)
+</ParamField>
+
+<ParamField path="saldoInicial" type="float" default="0">
+  Initial balance
+</ParamField>
+
+<ParamField path="interesAnual" type="float" default="0.02">
+  Annual interest rate (default 2%)
+</ParamField>
+
+#### New Methods
+
+**calcularInteres()**
+
+Calculates interest based on current balance:
+
+```php
+public function calcularInteres()
+{
+    return $this->getSaldo() * $this->interesAnual;
+}
+```
+
+Returns: Interest amount to be earned
+
+**aplicarInteres()**
+
+Applies interest to the account:
+
+```php
+public function aplicarInteres()
+{
+    $interes = $this->calcularInteres();
+    $this->depositar($interes);
+}
+```
+
+<Note>
+  This method uses the inherited `depositar()` method from CuentaBanco, demonstrating code reuse through inheritance.
+</Note>
+
+### Example Usage
+
+```php
+$cliente = new Cliente('Sofía', 'Vargas', '33445566');
+
+// Create savings account with 3% annual interest
+$ahorro = new CuentaAhorro('0102555555555555', $cliente, 10000, 0.03);
+
+echo $ahorro->getSaldo(); // 10000
+
+// Calculate interest
+$interes = $ahorro->calcularInteres();
+echo $interes; // 300 (3% of 10000)
+
+// Apply interest
+$ahorro->aplicarInteres();
+echo $ahorro->getSaldo(); // 10300
+
+// Can still use inherited methods
+$ahorro->depositar(1000);
+echo $ahorro->getSaldo(); // 11300
+```
+
+## CuentaCorriente: Checking Account
+
+The checking account is a basic extension with no additional features.
+
+### Complete Implementation
+
+From `CuentaCorriente.class.php`:
+
+```php
+class CuentaCorriente extends CuentaBanco
+{
+    public function __construct($numeroCuenta, $titular, $saldoInicial = 0)
+    {
+        parent::__construct($numeroCuenta, 'corriente', $titular, $saldoInicial);
+    }
+}
+```
+
+<Note>
+  CuentaCorriente doesn't add new functionality but automatically sets the account type to 'corriente'. This demonstrates that inheritance can be used for specialization even without adding new methods.
+</Note>
+
+### Example Usage
+
+```php
+$cliente = new Cliente('Miguel', 'Torres', '77889900');
+
+// Create checking account
+$corriente = new CuentaCorriente('0102666666666666', $cliente, 5000);
+
+// Uses all inherited methods
+$corriente->depositar(2000);
+$corriente->retirar(1000);
+echo $corriente->getSaldo(); // 6000
+echo $corriente->getTipo(); // 'corriente'
+```
+
+## Inheritance Hierarchy
+
+```
+CuentaBanco (base class)
+├── Properties: numeroCuenta, tipo, titular, saldo, claveCajero, transacciones
+├── Methods: depositar(), retirar(), getSaldo(), etc.
+│
+├── CuentaAhorro (extends CuentaBanco)
+│   ├── Inherits: All properties and methods from CuentaBanco
+│   ├── Adds: interesAnual property
+│   └── Adds: calcularInteres(), aplicarInteres() methods
+│
+└── CuentaCorriente (extends CuentaBanco)
+    └── Inherits: All properties and methods from CuentaBanco
+```
+
+## What Gets Inherited?
+
+Both CuentaAhorro and CuentaCorriente automatically have:
+
+<Tabs>
+  <Tab title="Properties">
+    - `$numeroCuenta`
+    - `$tipo`
+    - `$titular`
+    - `$saldo`
+    - `$claveCajero`
+    - `$transacciones`
+  </Tab>
+  
+  <Tab title="Methods">
+    - `depositar($monto)`
+    - `retirar($monto)`
+    - `getSaldo()`
+    - `getNumeroCuenta()`
+    - `getTipo()`
+    - `getTitular()`
+    - `getClaveCajero()`
+    - `getTransacciones()`
+    - `RegistrarTransaccion($tipo, $monto)`
+  </Tab>
+</Tabs>
+
+## Benefits of Inheritance
+
+<CardGroup cols={2}>
+  <Card title="Code Reuse" icon="recycle">
+    Write common functionality once in the parent class, use it in all child classes
+  </Card>
+  
+  <Card title="Maintainability" icon="wrench">
+    Fix bugs in one place (parent class) and all child classes benefit
+  </Card>
+  
+  <Card title="Specialization" icon="sparkles">
+    Create specific types while maintaining a common interface
+  </Card>
+  
+  <Card title="Polymorphism" icon="shapes">
+    Treat different account types uniformly through the parent class interface
+  </Card>
+</CardGroup>
+
+## Practical Example: Mixed Account Types
+
+```php
+$cliente = new Cliente('Elena', 'Jiménez', '11223344');
+
+// Create different account types
+$ahorro = new CuentaAhorro('0102777777777777', $cliente, 20000, 0.025);
+$corriente = new CuentaCorriente('0102888888888888', $cliente, 8000);
+
+// Add both to client
+$cliente->setCuenta($ahorro);
+$cliente->setCuenta($corriente);
+
+// Process all accounts uniformly
+$cuentas = $cliente->getCuentas();
+foreach ($cuentas as $cuenta) {
+    echo "Cuenta: " . $cuenta->getNumeroCuenta() . "\n";
+    echo "Tipo: " . $cuenta->getTipo() . "\n";
+    echo "Saldo: " . $cuenta->getSaldo() . "\n\n";
+}
+
+// Use specialized functionality
+if ($ahorro instanceof CuentaAhorro) {
+    $ahorro->aplicarInteres();
+    echo "Interest applied to savings account\n";
+}
+```
+
+## Working with ATM (Cajero)
+
+The Cajero class works with any CuentaBanco type:
+
+```php
+$cliente = new Cliente('Roberto', 'Sánchez', '99001122');
+
+// Cajero works with CuentaAhorro
+$ahorro = new CuentaAhorro('0102999999999999', $cliente, 15000, 0.03);
+$cajeroAhorro = new Cajero($ahorro, '4444');
+$cajeroAhorro->Retirar(1000);
+
+// Cajero also works with CuentaCorriente
+$corriente = new CuentaCorriente('0102000000000000', $cliente, 5000);
+$cajeroCorriente = new Cajero($corriente, '5555');
+$cajeroCorriente->Retirar(500);
+```
+
+<Note>
+  This demonstrates **polymorphism** - Cajero can work with any CuentaBanco subclass because they all share the same interface.
+</Note>
+
+## Advanced: Monthly Interest Application
+
+Here's a practical example of processing multiple accounts:
+
+```php
+function aplicarInteresMensual($cuentas)
+{
+    foreach ($cuentas as $cuenta) {
+        // Only apply interest to savings accounts
+        if ($cuenta instanceof CuentaAhorro) {
+            $cuenta->aplicarInteres();
+            echo "Interest applied to account: " . 
+                 $cuenta->getNumeroCuenta() . "\n";
+        }
+    }
+}
+
+// Usage
+$cliente = new Cliente('Andrea', 'Morales', '55443322');
+
+$ahorro1 = new CuentaAhorro('0102111111111111', $cliente, 50000);
+$corriente = new CuentaCorriente('0102222222222222', $cliente, 10000);
+$ahorro2 = new CuentaAhorro('0102333333333333', $cliente, 25000);
+
+$cuentas = [$ahorro1, $corriente, $ahorro2];
+aplicarInteresMensual($cuentas);
+// Only applies interest to $ahorro1 and $ahorro2
+```
+
+## Key Takeaways
+
+1. **Inheritance enables code reuse**: Child classes inherit all parent functionality
+2. **Use `extends` keyword**: Creates the parent-child relationship
+3. **Call parent constructor**: Use `parent::__construct()` to initialize inherited properties
+4. **Add specialization**: Child classes can add new properties and methods
+5. **Maintain compatibility**: Child classes can be used anywhere the parent class is expected
+
+<Note>
+  Inheritance is one of the four pillars of OOP (along with Encapsulation, Abstraction, and Polymorphism). Master it to write more maintainable and scalable code.
+</Note>

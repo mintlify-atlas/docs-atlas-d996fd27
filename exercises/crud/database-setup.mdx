@@ -1,0 +1,336 @@
+---
+title: 'Database Setup'
+description: 'Configure MySQL database and establish PDO connections for the CRUD application'
+icon: 'server'
+---
+
+## Database Schema
+
+The CRUD application uses a MySQL database named `yixondb` with a single `usuarios` (users) table that stores user account information.
+
+### Table Structure: usuarios
+
+The `usuarios` table contains all user data with built-in constraints for data integrity:
+
+```sql
+CREATE TABLE `usuarios` (
+  `id` int(11) NOT NULL,
+  `cedula` varchar(8) NOT NULL,
+  `nombres` varchar(255) NOT NULL,
+  `apellidos` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `user_pass` varchar(18) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+```
+
+### Column Definitions
+
+<ParamField path="id" type="int(11)" required>
+  Primary key with auto-increment. Uniquely identifies each user.
+</ParamField>
+
+<ParamField path="cedula" type="varchar(8)" required>
+  National identification card number. Must be unique across all users.
+</ParamField>
+
+<ParamField path="nombres" type="varchar(255)" required>
+  User's first name(s). Can contain multiple names.
+</ParamField>
+
+<ParamField path="apellidos" type="varchar(255)" required>
+  User's last name(s). Can contain multiple surnames.
+</ParamField>
+
+<ParamField path="email" type="varchar(255)" required>
+  User's email address. Must be unique across all users.
+</ParamField>
+
+<ParamField path="user_pass" type="varchar(18)" required>
+  Hashed password using bcrypt. Must be unique (stores bcrypt hash).
+</ParamField>
+
+### Constraints and Indexes
+
+The table includes several constraints to ensure data integrity:
+
+```sql
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `cedula` (`cedula`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `user_pass` (`user_pass`);
+
+ALTER TABLE `usuarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+```
+
+<Note>
+**Unique Constraints** prevent duplicate entries for:
+- `cedula` - Each ID number must be unique
+- `email` - Each email address must be unique  
+- `user_pass` - Each password hash must be unique (unusual but enforced)
+</Note>
+
+### Sample Data
+
+The database includes sample user records:
+
+```sql
+INSERT INTO `usuarios` (`id`, `cedula`, `nombres`, `apellidos`, `email`, `user_pass`) VALUES
+(17, '28499788', 'victor jhoann ', 'patino castellar', 'victorcastellar13@gmail.com', '$2y$10$O0jKA9PMQR0'),
+(19, '30018048', 'henry elias', 'gomez larsson', 'henger@gmail.com', '$2y$10$RdSeCcQ.IyA'),
+(20, '30445868', 'moises ramon', 'baptista toledo', 'toledito@gmail.com', '$2y$10$2/KSKkizXZB'),
+(22, '18048668', 'Manuela victoria', 'pepinilla sofrances', 'sofrances@hotmail.com', '$2y$10$oWA/RToTOpw');
+```
+
+## Installation Steps
+
+<Steps>
+  <Step title="Create the database">
+    First, create the database in MySQL:
+    
+    ```sql
+    CREATE DATABASE yixondb;
+    USE yixondb;
+    ```
+  </Step>
+  
+  <Step title="Import the schema">
+    Import the complete SQL file using phpMyAdmin or command line:
+    
+    ```bash
+    mysql -u root -p yixondb < yixondb.sql
+    ```
+    
+    Or use phpMyAdmin:
+    - Navigate to the `yixondb` database
+    - Click on the "Import" tab
+    - Select `yixondb.sql` file
+    - Click "Go" to execute
+  </Step>
+  
+  <Step title="Verify the installation">
+    Check that the table was created successfully:
+    
+    ```sql
+    SHOW TABLES;
+    DESCRIBE usuarios;
+    SELECT COUNT(*) FROM usuarios;
+    ```
+  </Step>
+  
+  <Step title="Configure database credentials">
+    Update the connection settings in `database.php` (see below)
+  </Step>
+</Steps>
+
+## Database Connection Class
+
+The `database.php` file provides a reusable Database class that handles PDO connections:
+
+```php database.php
+<?php 
+class Database{
+    private $conexion;
+
+    public function __construct()
+    {
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ];
+
+        $this->conexion = new PDO('mysql:host=localhost;dbname=yixondb;charset=utf8', 'root', '', $options);
+
+        $this->conexion->exec('SET CHARACTER SET UTF8');
+    }
+
+    public function getConexion()
+    {
+        return $this->conexion;
+    }
+
+    public function closeConexion()
+    {
+        $this->conexion = null;
+    }
+}
+```
+
+### Connection Configuration
+
+<ParamField path="host" type="string" default="localhost">
+  MySQL server hostname or IP address
+</ParamField>
+
+<ParamField path="dbname" type="string" default="yixondb">
+  Name of the database to connect to
+</ParamField>
+
+<ParamField path="charset" type="string" default="utf8">
+  Character encoding for the connection
+</ParamField>
+
+<ParamField path="username" type="string" default="root">
+  MySQL username for authentication
+</ParamField>
+
+<ParamField path="password" type="string" default="">
+  MySQL password (empty string for local development)
+</ParamField>
+
+### PDO Options Explained
+
+```php
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
+```
+
+<ParamField path="PDO::ATTR_ERRMODE" type="constant">
+  Set to `PDO::ERRMODE_EXCEPTION` to throw exceptions on database errors instead of silent failures
+</ParamField>
+
+<ParamField path="PDO::ATTR_DEFAULT_FETCH_MODE" type="constant">
+  Set to `PDO::FETCH_ASSOC` to return query results as associative arrays (column names as keys)
+</ParamField>
+
+## Usage Example
+
+Here's how to use the Database class in your controllers:
+
+```php
+<?php
+require_once "database.php";
+
+// Create database instance
+$database = new Database();
+
+// Get PDO connection object
+$conexion = $database->getConexion();
+
+// Use connection for queries
+$stmt = $conexion->prepare("SELECT * FROM usuarios");
+$stmt->execute();
+$usuarios = $stmt->fetchAll();
+
+// Close connection when done (optional - happens automatically)
+$database->closeConexion();
+```
+
+## Class Methods
+
+### constructor()
+
+Initializes the database connection with PDO:
+
+```php
+public function __construct()
+```
+
+- Creates new PDO instance with configured options
+- Sets character encoding to UTF-8
+- Enables exception mode for error handling
+
+### getConexion()
+
+Returns the active PDO connection:
+
+```php
+public function getConexion(): PDO
+```
+
+**Returns**: PDO connection object for executing queries
+
+### closeConexion()
+
+Closes the database connection:
+
+```php
+public function closeConexion(): void
+```
+
+- Sets connection to `null` to free resources
+- Usually not necessary as PHP closes connections automatically
+
+## Connection Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Singleton Pattern" icon="puzzle-piece">
+    Consider implementing a singleton pattern to reuse the same connection across requests
+  </Card>
+  
+  <Card title="Error Handling" icon="exclamation-triangle">
+    Always use try-catch blocks when working with PDO exceptions
+  </Card>
+  
+  <Card title="Credentials Security" icon="key">
+    Store database credentials in environment variables for production
+  </Card>
+  
+  <Card title="Connection Pooling" icon="network-wired">
+    For high-traffic applications, consider using persistent connections
+  </Card>
+</CardGroup>
+
+## Environment-Specific Configuration
+
+For production environments, use environment variables:
+
+```php
+// Production configuration example
+$host = getenv('DB_HOST') ?: 'localhost';
+$dbname = getenv('DB_NAME') ?: 'yixondb';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
+
+$dsn = "mysql:host={$host};dbname={$dbname};charset=utf8";
+$this->conexion = new PDO($dsn, $username, $password, $options);
+```
+
+<Note>
+**Security Warning**: Never commit database credentials to version control. Use `.env` files with proper `.gitignore` configuration.
+</Note>
+
+## Troubleshooting
+
+### Connection Failed
+
+If you encounter connection errors:
+
+1. **Verify MySQL is running**: Check if MySQL service is active
+2. **Check credentials**: Ensure username and password are correct
+3. **Database exists**: Confirm the database name is correct
+4. **Port number**: Add port if not using default 3306: `host=localhost:3306`
+
+### Character Encoding Issues
+
+If you see garbled text:
+
+```php
+// Ensure UTF-8 encoding at multiple levels
+$this->conexion->exec('SET CHARACTER SET UTF8');
+$this->conexion->exec('SET NAMES utf8mb4');
+$this->conexion->exec('SET CHARACTER_SET_CONNECTION=utf8mb4');
+```
+
+### PDO Extension Not Found
+
+Enable PDO extension in `php.ini`:
+
+```ini
+extension=pdo_mysql
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="ORM Pattern" icon="layer-group" href="./orm-pattern">
+    Learn how the ORM class uses this database connection
+  </Card>
+  
+  <Card title="CRUD Operations" icon="list-check" href="./operations">
+    See the database in action with CRUD operations
+  </Card>
+</CardGroup>

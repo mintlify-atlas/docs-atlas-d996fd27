@@ -1,0 +1,469 @@
+---
+title: 'Banking System Implementation'
+description: 'Complete documentation of the PHP banking system with classes for accounts, clients, transactions, and ATM operations'
+---
+
+## System Overview
+
+The banking system demonstrates how multiple classes interact to create a complete application. It includes account management, transaction tracking, and ATM operations.
+
+<CardGroup cols={2}>
+  <Card title="Core Components" icon="cube">
+    CuentaBanco, Cliente, Transaccion, Cajero
+  </Card>
+  <Card title="Specialized Accounts" icon="building-columns">
+    CuentaAhorro, CuentaCorriente (see Inheritance page)
+  </Card>
+</CardGroup>
+
+## CuentaBanco Class
+
+The base bank account class handles deposits, withdrawals, and transaction history.
+
+### Properties
+
+From `CuentaBanco.class.php:7-12`:
+
+```php
+class CuentaBanco
+{
+    private $numeroCuenta;
+    private $tipo;              // 'ahorro' or 'corriente'
+    private $titular;           // Reference to Cliente object
+    private $saldo;
+    private $claveCajero;       // ATM PIN
+    private $transacciones = []; // Transaction history
+}
+```
+
+### Constructor
+
+From `CuentaBanco.class.php:14-21`:
+
+```php
+public function __construct($numeroCuenta, $tipo, $titular, $claveCajero, $saldoInicial = 0)
+{
+    $this->numeroCuenta = $numeroCuenta;
+    $this->tipo = $tipo;
+    $this->titular = $titular;
+    $this->claveCajero = $claveCajero;
+    $this->saldo = $saldoInicial;
+}
+```
+
+<ParamField path="numeroCuenta" type="string" required>
+  Unique account number (e.g., '0102001234567890')
+</ParamField>
+
+<ParamField path="tipo" type="string" required>
+  Account type: 'ahorro' (savings) or 'corriente' (checking)
+</ParamField>
+
+<ParamField path="titular" type="Cliente" required>
+  Cliente object representing the account owner
+</ParamField>
+
+<ParamField path="claveCajero" type="string" required>
+  ATM PIN code for secure access
+</ParamField>
+
+<ParamField path="saldoInicial" type="float" default="0">
+  Initial account balance
+</ParamField>
+
+### Key Methods
+
+#### depositar()
+
+Deposits money into the account and records the transaction.
+
+From `CuentaBanco.class.php:74-78`:
+
+```php
+public function depositar($monto)
+{
+    $this->saldo += $monto;
+    $this->RegistrarTransaccion('depósito', $monto);
+}
+```
+
+<ParamField path="monto" type="float" required>
+  Amount to deposit
+</ParamField>
+
+#### retirar()
+
+Withdraws money if sufficient funds are available.
+
+From `CuentaBanco.class.php:80-88`:
+
+```php
+public function retirar($monto)
+{
+    if ($monto <= $this->saldo) {
+        $this->saldo -= $monto;
+        $this->RegistrarTransaccion('retiro', $monto);
+    } else {
+        throw new Exception("Saldo insuficiente");
+    }
+}
+```
+
+<ParamField path="monto" type="float" required>
+  Amount to withdraw
+</ParamField>
+
+<Note>
+  The method throws an exception if the withdrawal amount exceeds the available balance, preventing overdrafts.
+</Note>
+
+#### RegistrarTransaccion()
+
+Creates and stores a transaction record.
+
+From `CuentaBanco.class.php:68-72`:
+
+```php
+public function RegistrarTransaccion($tipo, $monto)
+{
+    $transaccion = new Transaccion($tipo, $monto, date('Y-m-d H:i:s'));
+    $this->transacciones[] = $transaccion;
+}
+```
+
+<ParamField path="tipo" type="string" required>
+  Transaction type: 'depósito', 'retiro', etc.
+</ParamField>
+
+<ParamField path="monto" type="float" required>
+  Transaction amount
+</ParamField>
+
+### Example Usage
+
+```php
+$cliente = new Cliente('Ana', 'López', '11223344');
+$cuenta = new CuentaBanco('0102001234567890', 'ahorro', $cliente, '1234', 1000);
+
+// Deposit money
+$cuenta->depositar(500);
+echo $cuenta->getSaldo(); // 1500
+
+// Withdraw money
+try {
+    $cuenta->retirar(200);
+    echo $cuenta->getSaldo(); // 1300
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
+// View transaction history
+$transacciones = $cuenta->getTransacciones();
+foreach ($transacciones as $trans) {
+    echo $trans->getTipo() . ': ' . $trans->getMonto();
+}
+```
+
+## Cliente Class
+
+Represents a bank customer who can own multiple accounts.
+
+### Complete Implementation
+
+From `cliente.class.php`:
+
+```php
+class Cliente
+{
+    private $nombre;
+    private $apellido;
+    private $cedula;
+    private $cuentas;
+
+    public function __construct($nombre, $apellido, $cedula, $cuentas = [])
+    {
+        $this->nombre = $nombre;
+        $this->apellido = $apellido;
+        $this->cedula = $cedula;
+        $this->cuentas = $cuentas;
+    }
+
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    public function getCedula()
+    {
+        return $this->cedula;
+    }
+
+    public function getCuentas()
+    {
+        return $this->cuentas;
+    }
+
+    public function setCuenta($cuenta)
+    {
+        $this->cuentas[] = $cuenta;
+    }
+}
+```
+
+### Example: Client with Multiple Accounts
+
+```php
+$cliente = new Cliente('Carlos', 'Ruiz', '99887766');
+
+// Create savings account
+$ahorro = new CuentaBanco('0102111111111111', 'ahorro', $cliente, '1234', 5000);
+$cliente->setCuenta($ahorro);
+
+// Create checking account
+$corriente = new CuentaBanco('0102222222222222', 'corriente', $cliente, '5678', 2000);
+$cliente->setCuenta($corriente);
+
+// Access all accounts
+$cuentas = $cliente->getCuentas();
+echo count($cuentas); // 2
+```
+
+## Transaccion Class
+
+Records individual banking transactions with type, amount, and timestamp.
+
+### Complete Implementation
+
+From `Transaccion.class.php`:
+
+```php
+class Transaccion
+{
+    private $tipo;
+    private $monto;
+    private $fecha;
+
+    public function __construct($tipo, $monto, $fecha)
+    {
+        $this->tipo = $tipo;
+        $this->monto = $monto;
+        $this->fecha = $fecha;
+    }
+
+    public function getTipo()
+    {
+        return $this->tipo;
+    }
+
+    public function getMonto()
+    {
+        return $this->monto;
+    }
+
+    public function getFecha()
+    {
+        return $this->fecha;
+    }
+}
+```
+
+<Note>
+  Transactions are automatically created by the `RegistrarTransaccion()` method in CuentaBanco. You typically don't create them manually.
+</Note>
+
+## Cajero Class
+
+Simulates an ATM machine with PIN-protected operations.
+
+### Complete Implementation
+
+From `Cajero.class.php`:
+
+```php
+class Cajero
+{
+    private $cuenta;
+    private $clave;
+
+    public function __construct($cuenta, $clave)
+    {
+        $this->cuenta = $cuenta;
+        $this->clave = $clave;
+    }
+
+    public function Retirar($monto)
+    {
+        if ($this->clave === $this->cuenta->getClaveCajero()) {
+            $this->cuenta->retirar($monto);
+        } else {
+            throw new Exception("Clave incorrecta");
+        }
+    }
+
+    public function ConsultarSaldo()
+    {
+        if ($this->clave === $this->cuenta->getClaveCajero()) {
+            return $this->cuenta->getSaldo();
+        } else {
+            throw new Exception("Clave incorrecta");
+        }
+    }
+
+    public function CambiarClave($nuevaClave)
+    {
+        if ($this->clave === $this->cuenta->getClaveCajero()) {
+            $this->cuenta->setClaveCajero($nuevaClave);
+            $this->clave = $nuevaClave;
+        } else {
+            throw new Exception("Clave incorrecta");
+        }
+    }
+}
+```
+
+### ATM Operations
+
+#### Retirar()
+
+Withdraw money from ATM with PIN validation.
+
+<ParamField path="monto" type="float" required>
+  Amount to withdraw
+</ParamField>
+
+#### ConsultarSaldo()
+
+Check account balance with PIN validation.
+
+Returns: Current account balance
+
+#### CambiarClave()
+
+Change ATM PIN with current PIN validation.
+
+<ParamField path="nuevaClave" type="string" required>
+  New PIN code
+</ParamField>
+
+### Example Usage
+
+```php
+$cliente = new Cliente('Pedro', 'Martínez', '55667788');
+$cuenta = new CuentaBanco('0102333333333333', 'ahorro', $cliente, '9999', 3000);
+
+// Create ATM session
+$cajero = new Cajero($cuenta, '9999');
+
+try {
+    // Check balance
+    $saldo = $cajero->ConsultarSaldo();
+    echo "Saldo: $saldo"; // 3000
+    
+    // Withdraw money
+    $cajero->Retirar(500);
+    echo $cajero->ConsultarSaldo(); // 2500
+    
+    // Change PIN
+    $cajero->CambiarClave('1111');
+    
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Wrong PIN attempt
+$cajeroInvalido = new Cajero($cuenta, '0000');
+try {
+    $cajeroInvalido->ConsultarSaldo(); // Throws exception
+} catch (Exception $e) {
+    echo $e->getMessage(); // "Clave incorrecta"
+}
+```
+
+<Note>
+  The Cajero class demonstrates **encapsulation** and **security** - all operations verify the PIN before allowing access to account methods.
+</Note>
+
+## System Integration Example
+
+Here's how all classes work together:
+
+```php
+// 1. Create a client
+$cliente = new Cliente('Laura', 'Fernández', '12121212');
+
+// 2. Open a bank account
+$cuenta = new CuentaBanco(
+    '0102444444444444',
+    'ahorro',
+    $cliente,
+    '7777',
+    10000
+);
+
+// 3. Add account to client
+$cliente->setCuenta($cuenta);
+
+// 4. Perform operations
+$cuenta->depositar(2000);
+$cuenta->retirar(500);
+
+// 5. Use ATM
+$cajero = new Cajero($cuenta, '7777');
+$cajero->Retirar(1000);
+$saldo = $cajero->ConsultarSaldo();
+echo "Saldo final: $saldo"; // 10500
+
+// 6. Review transaction history
+$transacciones = $cuenta->getTransacciones();
+foreach ($transacciones as $t) {
+    echo sprintf(
+        "%s: $%s (%s)\n",
+        $t->getTipo(),
+        $t->getMonto(),
+        $t->getFecha()
+    );
+}
+```
+
+## Class Relationships
+
+<Tabs>
+  <Tab title="One-to-Many">
+    - One **Cliente** can have many **CuentaBanco** objects
+    - One **CuentaBanco** has many **Transaccion** objects
+  </Tab>
+  
+  <Tab title="One-to-One">
+    - One **Cajero** operates on one **CuentaBanco**
+    - One **CuentaBanco** belongs to one **Cliente** (titular)
+  </Tab>
+  
+  <Tab title="Composition">
+    - **Transaccion** objects are created and owned by **CuentaBanco**
+    - They cannot exist independently
+  </Tab>
+</Tabs>
+
+## Key Design Patterns
+
+<CardGroup cols={2}>
+  <Card title="Encapsulation" icon="lock">
+    All properties are private, accessed only through public methods
+  </Card>
+  
+  <Card title="Validation" icon="shield-check">
+    Methods validate input (sufficient funds, correct PIN) before executing
+  </Card>
+  
+  <Card title="Automatic Logging" icon="list-timeline">
+    All financial operations automatically create transaction records
+  </Card>
+  
+  <Card title="Exception Handling" icon="triangle-exclamation">
+    Errors throw exceptions for proper error handling
+  </Card>
+</CardGroup>
+
+<Note>
+  Continue to the **Inheritance** page to see how CuentaAhorro and CuentaCorriente extend the base CuentaBanco class.
+</Note>

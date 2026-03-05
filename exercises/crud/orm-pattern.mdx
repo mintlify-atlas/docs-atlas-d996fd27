@@ -1,0 +1,486 @@
+---
+title: 'ORM Pattern Implementation'
+description: 'Build a custom Object-Relational Mapping class to abstract database operations in PHP'
+icon: 'layer-group'
+---
+
+## What is an ORM?
+
+An **ORM (Object-Relational Mapping)** is a programming technique that allows you to interact with databases using object-oriented code instead of writing raw SQL queries. This abstraction layer provides:
+
+- **Code reusability**: Write database logic once, use it everywhere
+- **Security**: Built-in protection against SQL injection
+- **Maintainability**: Easier to update and refactor code
+- **Type safety**: Work with objects instead of raw arrays
+
+## The ORM Class
+
+The custom ORM class provides all basic CRUD operations (Create, Read, Update, Delete) that can be inherited by any model class.
+
+```php orm.class.php
+<?php
+class ORM
+{
+    protected $id;
+    protected $table;
+    protected $db;
+
+    public function __construct($id, $table, PDO $conexion)
+    {
+        $this->id = $id;
+        $this->table = $table;
+        $this->db = $conexion;
+    }
+
+    // CRUD methods implementation below...
+}
+```
+
+### Protected Properties
+
+<ParamField path="id" type="string">
+  Name of the primary key column (e.g., "id")
+</ParamField>
+
+<ParamField path="table" type="string">
+  Name of the database table (e.g., "usuarios")
+</ParamField>
+
+<ParamField path="db" type="PDO">
+  Active PDO database connection object
+</ParamField>
+
+### Constructor
+
+The constructor initializes the ORM with table-specific information:
+
+```php
+public function __construct($id, $table, PDO $conexion)
+```
+
+<Note>
+By accepting the table name and primary key as parameters, this ORM can work with any database table without modification.
+</Note>
+
+## CRUD Operations
+
+### Create: save() Method
+
+Inserts a new record into the database with automatic filtering of empty values:
+
+```php
+public function save($data) {
+    // 1. FILTER: Remove empty strings and nulls
+    $data = array_filter($data, function($value) {
+        return $value !== null && $value !== '';
+    });
+
+    // Check if there is anything left to save
+    if (empty($data)) {
+        return false; 
+    }
+
+    // 2. Build the SQL with filtered data
+    $columns = array_keys($data);
+    $placeholders = array_map(fn($col) => ":$col", $columns);
+
+    $sql = "INSERT INTO {$this->table} (";
+    $sql .= implode(', ', $columns);
+    $sql .= ") VALUES (";
+    $sql .= implode(', ', $placeholders);
+    $sql .= ")";
+    
+    // 3. Prepare and Execute
+    $stmt = $this->db->prepare($sql);
+    
+    return $stmt->execute($data);
+}
+```
+
+#### How It Works
+
+<Steps>
+  <Step title="Filter empty values">
+    Removes null and empty string values from the data array using `array_filter()`
+  </Step>
+  
+  <Step title="Build dynamic SQL">
+    Creates column list and placeholders dynamically from array keys
+    
+    Example: `['name' => 'John', 'email' => 'john@example.com']`
+    
+    Becomes: `INSERT INTO usuarios (name, email) VALUES (:name, :email)`
+  </Step>
+  
+  <Step title="Execute prepared statement">
+    Uses PDO's prepared statements with the filtered data array for security
+  </Step>
+</Steps>
+
+<ParamField path="data" type="array" required>
+  Associative array where keys are column names and values are the data to insert
+  
+  ```php
+  $data = [
+      'cedula' => '12345678',
+      'nombres' => 'Juan',
+      'apellidos' => 'Pérez',
+      'email' => 'juan@example.com',
+      'user_pass' => password_hash('secret', PASSWORD_BCRYPT)
+  ];
+  ```
+</ParamField>
+
+**Returns**: `bool` - True on success, false on failure
+
+### Read: getAll() Method
+
+Retrieves all records from the table:
+
+```php
+public function getAll()
+{
+    $stmt = $this->db->prepare("SELECT * FROM {$this->table}");
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+```
+
+**Returns**: `array` - Array of associative arrays (all records)
+
+```php
+// Example output:
+[
+    ['id' => 1, 'nombres' => 'Juan', 'email' => 'juan@example.com'],
+    ['id' => 2, 'nombres' => 'María', 'email' => 'maria@example.com']
+]
+```
+
+### Read: getById() Method
+
+Retrieves a single record by its primary key:
+
+```php
+public function getById($id)
+{
+    $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE {$this->id} = :id");
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    return $stmt->fetch();
+}
+```
+
+<ParamField path="id" type="mixed" required>
+  Value of the primary key to search for
+</ParamField>
+
+**Returns**: `array|false` - Associative array of the record, or false if not found
+
+```php
+// Example usage:
+$usuario = $usuarioModel->getById(17);
+// Returns: ['id' => 17, 'nombres' => 'victor jhoann', ...]
+```
+
+### Update: updateById() Method
+
+Updates an existing record with automatic filtering:
+
+```php
+public function updateById($id, $data)
+{
+    // 1. FILTER: Remove empty strings and nulls
+    $data = array_filter($data, function ($value) {
+        return $value !== null && $value !== '';
+    });
+
+    // Check if there is any data left to update
+    if (empty($data)) {
+        return true;
+    }
+
+    // 2. Build the SET clause with filtered data
+    $set_clauses = [];
+    foreach (array_keys($data) as $key) {
+        $set_clauses[] = "{$key} = :{$key}";
+    }
+
+    $sql = "UPDATE {$this->table} SET ";
+    $sql .= implode(', ', $set_clauses);
+    $sql .= " WHERE {$this->id} = :id_value";
+
+    // 3. Prepare the statement
+    $stmt = $this->db->prepare($sql);
+
+    // 4. Combine filtered data with the ID for execution
+    $bind_params = array_merge($data, ['id_value' => $id]);
+
+    // 5. Execute
+    return $stmt->execute($bind_params);
+}
+```
+
+#### Dynamic SET Clause
+
+The method builds the SQL dynamically:
+
+```php
+// Input data:
+['nombres' => 'Juan', 'email' => 'newemail@example.com']
+
+// Generated SQL:
+UPDATE usuarios SET nombres = :nombres, email = :email WHERE id = :id_value
+
+// Bound parameters:
+['nombres' => 'Juan', 'email' => 'newemail@example.com', 'id_value' => 17]
+```
+
+<ParamField path="id" type="mixed" required>
+  Primary key value of the record to update
+</ParamField>
+
+<ParamField path="data" type="array" required>
+  Associative array of columns to update (only non-empty values)
+</ParamField>
+
+**Returns**: `bool` - True on success
+
+<Note>
+The method uses `:id_value` as the placeholder for the WHERE clause to avoid conflicts with an `id` column in the data array.
+</Note>
+
+### Delete: deleteById() Method
+
+Removes a record from the database:
+
+```php
+public function deleteById($id)
+{
+    $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE {$this->id} = :id");
+    $stmt->bindParam(':id', $id);
+    return $stmt->execute();
+}
+```
+
+<ParamField path="id" type="mixed" required>
+  Primary key value of the record to delete
+</ParamField>
+
+**Returns**: `bool` - True on success
+
+## The Usuario Model
+
+The `Usuario` class extends the ORM to provide user-specific functionality:
+
+```php usuario.class.php
+<?php
+class Usuario extends ORM
+{
+    public function __construct(PDO $conexion)
+    {
+        parent::__construct('id', 'usuarios', $conexion);
+    }
+}
+```
+
+### Inheritance Benefits
+
+By extending the ORM class, Usuario automatically inherits all CRUD methods:
+
+```php
+$usuarioModel = new Usuario($conexion);
+
+// All ORM methods are now available:
+$usuarioModel->save($data);           // Create
+$usuarioModel->getAll();              // Read all
+$usuarioModel->getById(17);           // Read one
+$usuarioModel->updateById(17, $data); // Update
+$usuarioModel->deleteById(17);        // Delete
+```
+
+<Note>
+The constructor calls `parent::__construct()` with the table name "usuarios" and primary key "id", configuring the ORM for the usuarios table.
+</Note>
+
+## Usage Examples
+
+### Create a New User
+
+```php
+<?php
+require_once "database.php";
+require_once "orm.class.php";
+require_once "usuario.class.php";
+
+$database = new Database();
+$conexion = $database->getConexion();
+$usuarioModel = new Usuario($conexion);
+
+$data = [
+    'cedula' => '12345678',
+    'nombres' => 'Ana',
+    'apellidos' => 'García',
+    'email' => 'ana@example.com',
+    'user_pass' => password_hash('securepass', PASSWORD_BCRYPT)
+];
+
+$result = $usuarioModel->save($data);
+
+if ($result) {
+    echo "User created successfully!";
+}
+```
+
+### List All Users
+
+```php
+$usuarios = $usuarioModel->getAll();
+
+foreach ($usuarios as $usuario) {
+    echo "{$usuario['nombres']} {$usuario['apellidos']} - {$usuario['email']}<br>";
+}
+```
+
+### Update a User
+
+```php
+$updateData = [
+    'nombres' => 'Ana María',
+    'email' => 'anamaria@example.com'
+];
+
+$usuarioModel->updateById(17, $updateData);
+```
+
+### Delete a User
+
+```php
+$usuarioModel->deleteById(17);
+```
+
+## Security Features
+
+<CardGroup cols={2}>
+  <Card title="Prepared Statements" icon="shield-halved">
+    All SQL queries use PDO prepared statements with parameter binding, preventing SQL injection attacks
+  </Card>
+  
+  <Card title="Input Filtering" icon="filter">
+    Empty and null values are automatically filtered before database operations
+  </Card>
+  
+  <Card title="Dynamic Queries" icon="code">
+    SQL is built dynamically from data arrays, avoiding manual string concatenation
+  </Card>
+  
+  <Card title="Type Hinting" icon="check">
+    Constructor requires PDO type hint, ensuring valid database connection
+  </Card>
+</CardGroup>
+
+## Extending the ORM
+
+You can add custom methods to model classes:
+
+```php
+class Usuario extends ORM
+{
+    public function __construct(PDO $conexion)
+    {
+        parent::__construct('id', 'usuarios', $conexion);
+    }
+    
+    // Custom method: Find user by email
+    public function getByEmail($email)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE email = :email");
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+    
+    // Custom method: Verify password
+    public function verifyPassword($email, $password)
+    {
+        $user = $this->getByEmail($email);
+        if ($user) {
+            return password_verify($password, $user['user_pass']);
+        }
+        return false;
+    }
+}
+```
+
+## ORM Method Reference
+
+<CodeGroup>
+```php save()
+$usuarioModel->save([
+    'cedula' => '12345678',
+    'nombres' => 'Juan',
+    'email' => 'juan@example.com'
+]);
+// Returns: true|false
+```
+
+```php getAll()
+$usuarios = $usuarioModel->getAll();
+// Returns: array of all records
+```
+
+```php getById()
+$usuario = $usuarioModel->getById(17);
+// Returns: array|false
+```
+
+```php updateById()
+$usuarioModel->updateById(17, [
+    'nombres' => 'Juan Carlos'
+]);
+// Returns: true|false
+```
+
+```php deleteById()
+$usuarioModel->deleteById(17);
+// Returns: true|false
+```
+</CodeGroup>
+
+## Best Practices
+
+1. **Always filter input**: The ORM filters empty values, but validate data before passing to methods
+2. **Use password hashing**: Never store plain text passwords - always use `password_hash()`
+3. **Handle errors**: Wrap database operations in try-catch blocks
+4. **Close connections**: Let PHP garbage collection handle it, or manually close when needed
+5. **Create model classes**: Don't use ORM directly - extend it for each table
+
+## Performance Considerations
+
+<Note>
+**Tip**: For bulk operations, consider using transactions:
+
+```php
+$this->db->beginTransaction();
+try {
+    $usuarioModel->save($data1);
+    $usuarioModel->save($data2);
+    $usuarioModel->save($data3);
+    $this->db->commit();
+} catch (Exception $e) {
+    $this->db->rollBack();
+    throw $e;
+}
+```
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="CRUD Operations" icon="list-check" href="./operations">
+    See the ORM in action with complete CRUD operations
+  </Card>
+  
+  <Card title="Database Setup" icon="database" href="./database-setup">
+    Review database configuration and schema
+  </Card>
+</CardGroup>
